@@ -40,10 +40,10 @@ end -- end _update()
 function _draw()
 	cls() -- clear the screen
  
- -- draw either the game or the
- -- game over screen depending
- -- on whether gameover is true
- -- or false
+	-- draw either the game or the
+	-- game over screen depending
+	-- on whether gameover is true
+	-- or false
 	if gameover == false then
 		draw_game() -- tab 3
 	else
