@@ -2,7 +2,7 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 -- basics series
--- example 03: tables
+-- example 03: variables
 -- by matthew dimatteo
 
 -- runs once at start
