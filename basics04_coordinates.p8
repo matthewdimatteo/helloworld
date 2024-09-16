@@ -16,7 +16,7 @@ end
 
 -- loops 30x/sec
 function _update()
- -- move the ball
+	-- move the ball
 	x = x + xspd
 	y = y + yspd 
 end
