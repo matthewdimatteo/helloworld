@@ -16,7 +16,7 @@ function _init()
 	-- "string" value
 	text = "press x to score a point!"
 
-end
+end -- end _init()
 
 -- loops 30x/sec
 function _update()
