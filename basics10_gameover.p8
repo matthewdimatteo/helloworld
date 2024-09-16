@@ -18,7 +18,7 @@ function _init()
 	-- true or false
 	gameover = false
 	health = 100
-end
+end -- end _init()
 
 -- loops 30x/sec
 function _update()
