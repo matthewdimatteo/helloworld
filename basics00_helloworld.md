@@ -2,6 +2,7 @@
 basics00_helloworld.p8
 
 A customary way to begin learning a new programming language is to display the text "hello world" on the screen
+
 This first example is very simple, requiring only two lines of code to run:
   cls() is a built-in PICO-8 function that clears the screen -- this removes the command line interface and refreshes the screen each frame
   print() is another built-in PICO-8 function, used for displaying text
