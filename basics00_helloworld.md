@@ -7,6 +7,8 @@ This first example is very simple, requiring only two lines of code to run:
 cls() is a built-in PICO-8 function that clears the screen -- this removes the command line interface and refreshes the screen each frame  
 print() is another built-in PICO-8 function, used for displaying text  
 
+A function is a set of instructions for a program to execute -- you can create your own custom functions as well  
+
 All functions require parentheses after the function name, but some functions can also be given values inside the parentheses  
 
 print() requires the following values, in order, separated by commas:  
