@@ -16,7 +16,11 @@ x=60
 
 Declare your variables in the _init() function  
 
-You can use _update() to change variable values -- this example adds 2 to the variable y each frame (30fps)  
+You can use _update() to change variable values -- this example adds 2 to the variable y each frame (30fps):  
+y = y + 2  
+
+You could also write this using the shorthand notation:  
+y += 2
 
 Within the _draw() function, you can use the spr() function to draw sprites -- spr() takes the following values, in order:  
 
@@ -28,4 +32,4 @@ And several other optional values we will cover in later examples
 We can "plug in" our variables into the spr() function to draw a sprite at a location that changes over time:  
 spr(n,x,y)  
 
-y begins at 2, then increases by 2 each frame, so whatever that value is at the current frame, that's what y stands for  
+y begins at 2, then increases by 2 each frame, so whatever that value is at the current frame, that's what y stands for, and that's where it gets drawn on the screen  
