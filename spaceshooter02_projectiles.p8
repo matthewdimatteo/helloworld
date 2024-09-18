@@ -179,7 +179,7 @@ function move_plyr()
 
 	-- press x to shoot
 	if btn(❎) then
-	 shoot()
+		shoot()
 	end -- end if btn(❎)
 
 end -- end move_plyr()
