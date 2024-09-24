@@ -1,7 +1,9 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- game loop
+-- sidescroller series
+-- example 02: movement
+-- by matthew dimatteo
 
 -- runs once at start
 function _init()
