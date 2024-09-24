@@ -1,6 +1,9 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
+-- misc series
+-- example 02a: timer delay
+-- by matthew dimatteo
 
 function _init()
  gravity = 0.3

@@ -1,7 +1,10 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- game loop
+-- misc series
+-- example 03a: multilevel state machine
+-- by matthew dimatteo
+
 function _init()
     init_menu() -- set state to 0
 end -- end _init()

@@ -1,7 +1,9 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- game loop
+-- misc series
+-- example 01: life meter
+-- by matthew dimatteo
 
 -- runs once at start
 function _init()
