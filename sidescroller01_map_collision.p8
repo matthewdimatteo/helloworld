@@ -114,11 +114,7 @@ function make_player()
 	player.max_dy=3
 	player.x_acc=0.5
 	player.y_acc=4
-	player.running=false
-	player.jumping=false
-	player.falling=false
 	player.landed=false
-	player.facing="right"
 end -- end make_player()
 
 -- move player
@@ -129,17 +125,13 @@ function move_player()
 	-- hold left
 	if btn(0) then 
 		player.dx-=player.x_acc
-		player.running=true
 		player.flip=true
-		player.facing="left"
 	end -- end if btn(0)
 
 	-- hold right
 	if btn(1) then 
 		player.dx+=player.x_acc
-		player.running=true
 		player.flip=false
-		player.facing="right"
 	end -- end if btn(1)
 
 	-- press up or x to jump
@@ -164,30 +156,25 @@ function move_player()
 	if map_collision(player,"right",solid)
 	and not btn(0)
 	then
-		player.dx=0 
-		player.x-=((player.x+player.w+1)%8)-1 -- correct x position if stuck in wall 
+		player.dx=0
 	end -- end if map_collision
 
 	-- handle falling (if dy is positive, the player is moving lower)
-	if player.dy>0 then	 
- 		player.falling=true 
+	if player.dy>0 then	
   		player.landed=false 
-  		player.jumping=false
-	elseif player.dy<0 then
-		player.jumping=true -- if dy is negative, the player is jumping
-	end -- end if/elseif dy<>0
+	end -- end if dy>0
 
 	-- stop falling when touching
 	-- a solid tile below player
 	if map_collision(player,"down",solid)
 	and player.dy > 0
 	then
-		player.landed=true 
-		player.falling=false
+		player.landed=true
 		player.dy=0 -- stop falling
 		
 		-- because of dy momentum, the player can fall a few px into the floor
 		-- this calculates how many px and re-adjusts y
+		-- credit to nerdyteachers.com for this line of code
 		player.y-=((player.y+player.h+1)%8)-1
 
 	end -- end if map_collision down
@@ -197,7 +184,6 @@ function move_player()
 	and player.dy < 0
 	then
 		player.landed=false 
-		player.falling=true
 		player.dy=0 -- stop jumping
  	end -- end if map_collision up
 

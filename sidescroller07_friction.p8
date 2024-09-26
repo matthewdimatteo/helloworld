@@ -45,11 +45,15 @@ end -- end _update()
 function _draw()
 	cls() -- clear screen
 	map() -- draw the map
-	draw_hud()
+	spr(player.sp,player.x,player.y,1,1,player.flip) -- draw player
+
+	-- hud x, y coordinates
+	print_x=cam_x+2
+	print_y=cam_y+2
 	print("terrain:  "..terrain,print_x,print_y,7) -- print terrain
 	print("friction: "..friction,print_x,print_y+8,7) -- print friction
 	print("speed:    "..player.dx,print_x,print_y+16,7) -- print speed
-	spr(player.sp,player.x,player.y,1,1,player.flip) -- draw player
+
 end -- end _draw()
 -->8
 
@@ -68,15 +72,6 @@ function move_camera()
 	camera(cam_x,cam_y)
 
 end -- end move_camera()
-
--- hud
-function draw_hud()
-
-	-- hud x, y coordinates
-	print_x=cam_x+2
-	print_y=cam_y+2
-	   
-end -- end draw_hud()
 -->8
 
 -- player
@@ -114,11 +109,7 @@ function make_player()
 	player.y_acc=4
 
 	-- player state
-	player.running=false
-	player.jumping=false
-	player.falling=false
 	player.landed=false
-	player.facing="right"
 
 end -- end make_player()
 
@@ -131,17 +122,13 @@ function move_player()
 	-- hold left
 	if btn(0) then 
 		player.dx-=player.x_acc
-		player.running=true
 		player.flip=true
-		player.facing="left"
 	end -- end if btn(0)
 
 	-- hold right
 	if btn(1) then 
 		player.dx+=player.x_acc
-		player.running=true
 		player.flip=false
-		player.facing="right"
 	end -- end if btn(1)
 
 	-- press up or x to jump
@@ -152,22 +139,11 @@ function move_player()
 		sfx(6) -- jump sound
 	end -- end if btnp(2 or 5)
 
-	-- stop running when not pressing arrow keys
-	if player.running 
-	and not btn(0)
-	and not btn(1)
-	and not player.falling 
-	and not player.jumping then
-		player.running=false
-	end -- end if player.running
-
 	-- check vertical collision below (if dy is positive, the player is falling)
 	if player.dy>0 then 
 
 		-- set player state
-		player.falling=true 
 		player.landed=false 
-		player.jumping=false
 
 		-- collision with floor
 		if map_collision(player,"down",ground)
@@ -175,9 +151,12 @@ function move_player()
 		or map_collision(player,"down",ice)
 		then
 			player.landed=true 
-			player.falling=false
 			player.dy=0 -- stop moving
-			player.y-=((player.y+player.h+1)%8)-1 -- correct y position
+
+			-- because of dy momentum, the player can fall a few px into the floor
+			-- this calculates how many px and re-adjusts y
+			-- credit to nerdyteachers.com for this line of code
+			player.y-=((player.y+player.h+1)%8)-1
 		end -- end map_collision ground
 
 		-- grass
@@ -229,7 +208,6 @@ function move_player()
 		or map_collision(player,"right",ice)
 		then
 			player.dx=0 -- stop moving
-			player.x-=((player.x+player.w+1)%8)-1 -- correct x position to prevent getting stuck in wall
 		end -- end map_collision right
 	end -- end if player.dx</>0
 
@@ -243,7 +221,7 @@ function move_player()
 	end -- end if at map_start
 
 	-- switch to jumping sprite
-	if player.jumping then 
+	if player.landed == false then 
 		player.sp=6
 	end -- end if player.jumping
 
@@ -262,7 +240,6 @@ function map_collision(obj,dir,flag)
 	-- x1,y1 and x2,y2
 	
 	-- we can then use these coordinates to look up the tile's sprite number and whether it has a flag
-	
 	local x1=0
 	local y1=0
 	local x2=0
