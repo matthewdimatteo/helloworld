@@ -297,8 +297,8 @@ function mcollide(obj,dir,flag)
 	
 	-- this function checks two
 	-- points on the tile adjacent
-	-- to the  player: hx1,hy1 and
-	-- hx2,hy2	-- we can then use
+	-- to the player: hx1,hy1 and
+	-- hx2,hy2 -- we can then use
 	-- these coordinates to look up
 	-- the adjacent tile's sprite
 	-- number and whether it has
