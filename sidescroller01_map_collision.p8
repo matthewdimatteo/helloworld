@@ -6,7 +6,7 @@ __lua__
 -- by matthew dimatteo
 
 -- tab 0: game loop
--- tab 1: plyr functions
+-- tab 1: player functions
 -- tab 2: map collision function
 -- tab 3: swap sprite function
 
