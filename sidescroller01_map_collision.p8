@@ -19,7 +19,7 @@ function _init()
 	-- 8x8px sprite if false
 	-- 24x24px sprite if true
 	big=false
-	make_plyr() 
+	make_plyr() -- tab 1
 	
 	-- physics forces
 	grav=0.3
