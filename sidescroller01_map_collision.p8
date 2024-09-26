@@ -5,19 +5,27 @@ __lua__
 -- example 01: map collision
 -- by matthew dimatteo
 
+-- tab 0: game loop
+-- tab 1: plyr functions
+-- tab 2: map collision function
+-- tab 3: swap sprite function
+
 -- runs once at start
 function _init()
 
 	-- global variables and objects
 	solid=0 -- map tile flag
-	big=false -- 8x8px sprite if false; 24x24px sprite if true
-	make_player() -- object initialization
-
+	
+	-- 8x8px sprite if false
+	-- 24x24px sprite if true
+	big=false
+	make_plyr() 
+	
 	-- physics forces
-	gravity=0.3
-	friction=0.85
+	grav=0.3
+	fric=0.85
 
-	-- test-hitbox coordinates
+	-- coordinates to draw hitbox
 	hx1=0
 	hy1=0
 	hx2=0
@@ -29,18 +37,21 @@ end -- end _init()
 
 -- runs 30x per second
 function _update()
-	swap_sprite()	
-	move_player()
-	set_hitbox() -- set hitbox x,y coordinates
+	move_plyr() -- tab 1
+	set_hitbox() -- tab 2 
+	swap_sprite() -- tab 3	
 end -- end _update()
 
 -- runs 30x per second
 function _draw()
- 	cls() -- clear screen
+	cls() -- clear screen
 	map() -- draw the map
-	spr(player.sp,player.x,player.y,player.sw,player.sh,player.flip) -- draw player
+	
+	-- draw player
+	spr(plyr.n,plyr.x,plyr.y,
+	plyr.sw,plyr.sh,plyr.flip)
 
-	-- instructions: z to swap player sprite
+	-- instructions: z to swap spr
 	if big==false then
 		print("press z for big plyr sprite",2,2,7)
 	elseif big==true then
@@ -48,10 +59,10 @@ function _draw()
 	end
 		
 	-- print player pixel and tile position
-	print("pixel:  "..flr(player.x)..","..flr(player.y),2,10,10)
-	if player.tile_x 
-	and player.tile_y then
-		print("tile:   "..player.tile_x..","..player.tile_y,2,18,10)
+	print("pixel:  "..flr(plyr.x)..","..flr(plyr.y),2,10,10)
+	if plyr.tile_x 
+	and plyr.tile_y then
+		print("tile:   "..plyr.tile_x..","..plyr.tile_y,2,18,10)
 	end -- end if
 
 	-- draw collision hitboxes
@@ -59,155 +70,239 @@ function _draw()
 	rect(hx2,hy2,hx2,hy2,8)
 
 	-- print left collision info
-	if map_collision(player,"left",solid) then 
+	if mcollide(plyr,"left",solid) then 
 		print("collision on left with spr "..hsp2,2,112,7)
-	end -- end if map_collision
+	end -- end if mcollide
 		
 	-- print right collision info
-	if map_collision(player,"right",solid) then 
+	if mcollide(plyr,"right",solid) then 
 		print("collision on right with spr "..hsp2,2,112,7)
-	end -- end if map_collision
+	end -- end if mcollide
 		
 	-- print down collision info
-	if map_collision(player,"down",solid)
+	if mcollide(plyr,"down",solid)
  	and not btn(2)
  	then 
 		print("collision below with spr "..hsp1,2,120,7)
 	end -- end if map collision
 	
 	-- print up collision info
-	if map_collision(player,"up",solid)
-	and (player.dy < 0 or btn(2))
+	if mcollide(plyr,"up",solid)
+	and (plyr.dy < 0 or btn(2))
 	then 
 		print("collision above with spr "..hsp1,2,120,7)
 	end -- end if map collision
 	
 end -- end _draw()
 -->8
+-- player functions
 
--- player
-function make_player()
-	player={} -- create new player table
-
-	if big then 
-		player.x=16 -- player x position in pixels
-		player.y=64 -- player y position in pixels
-		player.sp=64 -- player sprite number
-		player.w=24 -- width of sprite artwork in pixels
-		player.h=24 -- height of sprite artwork in pixels
-		player.sw=3 -- number of sprite tiles to draw horizontally
-		player.sh=3 -- number of sprite tiles to draw vertically
+-- make player
+function make_plyr()
+	
+	-- create new player table
+	plyr={} 
+	
+	-- big sprite (24x24 pixels)
+	if big then
+	
+		plyr.n=64 -- sprite number
+		plyr.w=24 -- width in pixels
+		plyr.h=24 -- height in pixels
+	
+	-- small sprite (8x8 pixels)
 	else
-		player.x=16 -- player x position in pixels
-		player.y=88 -- player y position in pixels
-		player.sp=1 -- player sprite number
-		player.w=8 -- width of sprite artwork in pixels
-		player.h=8 -- height of sprite artwork in pixels
-		player.sw=1 -- number of sprite tiles to draw horizontally
-		player.sh=1 -- number of sprite tiles to draw vertically
+		plyr.n=1 -- sprite number
+		plyr.w=8 -- width in pixels
+		plyr.h=8 -- height in pixels
 	end -- end if big
 
-	player.flip=false
-	player.dx=0
-	player.dy=0
-	player.max_dx=2
-	player.max_dy=3
-	player.x_acc=0.5
-	player.y_acc=4
-	player.landed=false
-end -- end make_player()
+ 	-- pixel position 
+	plyr.x=16
+	plyr.y=64 
+	
+	-- width/height for sprite
+	-- function requires a tile
+	-- value (8 pixels per tile)	
+	plyr.sw=plyr.w/8
+	plyr.sh=plyr.h/8
+
+	-- whether to flip the sprite
+	-- horizontally
+	plyr.flip=false
+	
+	-- change in x,y
+	plyr.dx=0
+	plyr.dy=0
+
+	-- speed in x,y directions
+	plyr.xspd=0.5
+	plyr.yspd=4
+
+	-- whether the player has
+	-- landed (this will be set
+	-- to true when there is
+	-- collision with a map tile
+	-- below the player)
+	plyr.landed=false
+	
+end -- end make_plyr()
 
 -- move player
-function move_player()
- 	player.dy+=gravity  -- increase y speed by gravity
-	player.dx*=friction -- if friction <1, multiplication reduces change in x
- 
-	-- hold left
-	if btn(0) then 
-		player.dx-=player.x_acc
-		player.flip=true
-	end -- end if btn(0)
+function move_plyr()
+	
+	-- dx and dy are used to 
+	-- calculate how much the
+	-- player will move each frame
+	
+	-- multiplying dx by a friction
+	-- value less than 1 slows it
+	plyr.dx*=fric 
+	
+	-- inc change in y by gravity
+	-- to make player fall
+	plyr.dy+=grav 
+	
+	-- the player's x and y values
+	-- must be incremented by dx
+	-- and dy, respectively, at
+	-- the end of this function
+	-- in order to move
+	
+	-- hold left arrow
+	if btn(⬅️) then 
+	
+		-- substract from change in x
+		-- to move left
+		plyr.dx-=plyr.xspd
+		
+		-- flip player sprite since
+		-- it faces right by default
+		plyr.flip=true
+		
+	end -- end if btn(⬅️)
 
-	-- hold right
-	if btn(1) then 
-		player.dx+=player.x_acc
-		player.flip=false
-	end -- end if btn(1)
+	-- hold right arrow
+	if btn(➡️) then 
+	
+		-- add to change in x to
+		-- move right
+		plyr.dx+=plyr.xspd
+		
+		-- unflip the sprite in case
+		-- the player had been
+		-- moving left
+		plyr.flip=false
+		
+	end -- end if btn(➡️)
 
 	-- press up or x to jump
-	--  requiring player.landed means player must be on ground to jump, not in air
-	if (btnp(2) or btnp(5)) and player.landed then
-		player.dy-=player.y_acc
-		player.landed=false
-	end -- end if btn(2/5)
+	-- (btnp does not require key
+	-- to be held down)
+	if (btnp(⬆️) or btnp(❎))
+	
+	--	w/o the second condition,
+	-- the player would be able 
+	-- to jump indefinitely
+ 	and plyr.landed then
+ 
+		-- subtract from change in y
+		-- to move up on the screen
+		plyr.dy-=plyr.yspd
+		
+		-- set boolean to false to
+		-- prevent double jump
+		plyr.landed=false
+		
+	end -- end if btnp(⬆️/❎)
 
-	-- determine tile coordinates for player position (tiles are 8x8 pixels)
-	player.tile_x=flr(player.x/8)
-	player.tile_y=flr(player.y/8)
+	-- determine tile coordinates
+	-- for player position
+	-- (tiles are 8x8 pixels)
+	plyr.tile_x=flr(plyr.x/8)
+	plyr.tile_y=flr(plyr.y/8)
 
 	-- collide with wall on left
-	if map_collision(player,"left",solid)
-	and not btn(1)
+	if mcollide(plyr,"left",solid)
+	
+	-- allows movement to right
+	and not btn(➡️)
+	
 	then
-		player.dx=0
-	end -- end if map_collision
+		plyr.dx=0 -- stop moving l/r
+	end -- end if mcollide
 
  	-- collide with wall on right
-	if map_collision(player,"right",solid)
-	and not btn(0)
+	if mcollide(plyr,"right",solid)
+	
+	-- allows movement to left
+	and not btn(⬅️)
+	
 	then
-		player.dx=0
-	end -- end if map_collision
+		plyr.dx=0 -- stop moving l/r
+	end -- end if mcollide
 
-	-- handle falling (if dy is positive, the player is moving lower)
-	if player.dy>0 then	
-  		player.landed=false 
+	-- if dy is positive, the 
+	-- player is moving down
+	-- (falling), so they have
+	-- not landed yet
+	if plyr.dy>0 then	
+		plyr.landed=false 
 	end -- end if dy>0
 
 	-- stop falling when touching
 	-- a solid tile below player
-	if map_collision(player,"down",solid)
-	and player.dy > 0
+	if mcollide(plyr,"down",solid)
+	and plyr.dy > 0
 	then
-		player.landed=true
-		player.dy=0 -- stop falling
+		plyr.landed=true
+		plyr.dy=0 -- stop falling
 		
-		-- because of dy momentum, the player can fall a few px into the floor
-		-- this calculates how many px and re-adjusts y
-		-- credit to nerdyteachers.com for this line of code
-		player.y-=((player.y+player.h+1)%8)-1
+		-- because of vertical speed,
+		-- the player can fall a few
+		-- px into the floor. this
+		-- calculates how many px and
+		-- re-adjusts y (credit to 
+		-- nerdyteachers.com for this
+		-- formula)
+		plyr.y-=
+		((plyr.y+plyr.h+1)%8)-1
 
-	end -- end if map_collision down
+	end -- end if mcollide down
 	
-	-- stop moving up when collision with solid tile above player
-	if map_collision(player,"up",solid)
-	and player.dy < 0
+	-- stop moving up when there's
+	-- collision with solid tile
+	-- above the player
+	if mcollide(plyr,"up",solid)
+	and plyr.dy < 0
 	then
-		player.landed=false 
-		player.dy=0 -- stop jumping
- 	end -- end if map_collision up
+		plyr.landed=false 
+		plyr.dy=0 -- stop jumping
+	end -- end if mcollide up
 
-	-- update x and y positions by the change calculated
-	player.x+=player.dx
-	player.y+=player.dy
+	-- update x and y positions by
+	-- the change calculated
+	plyr.x+=plyr.dx
+	plyr.y+=plyr.dy
  
- 	-- constrain player to edges of screen
-	if player.x<0 then 
-		player.x=0
+	-- keep player on screen
+	if plyr.x<0 then 
+		plyr.x=0
 	end -- end if x<0
-	
-	if player.x>120 then
-	 	player.x = 120
-	end -- end if x>120
 
 end -- end move_player()
 -->8
-
--- map collision
-function map_collision(obj,dir,flag)
+-- map collision function
+function mcollide(obj,dir,flag)
 	
-	-- this function checks two points on the tile adjacent to the player: hx1,hy1 and hx2,hy2
-	-- we can then use these coordinates to look up the adjacent tile's sprite number and whether it has a flag
+	-- this function checks two
+	-- points on the tile adjacent
+	-- to the  player: hx1,hy1 and
+	-- hx2,hy2	-- we can then use
+	-- these coordinates to look up
+	-- the adjacent tile's sprite
+	-- number and whether it has
+	-- a flag turned on
 	
 	-- position of tile to left
 	if dir=="left" then 
@@ -242,11 +337,15 @@ function map_collision(obj,dir,flag)
 		hy2=hy1
 	end -- end if/elseif
 
-	-- get sprite number of adjacent tile (divide by 8 to convert from pixel coordinate to tile coordinate)
+	-- get sprite number of
+	-- adjacent tile (divide by 8
+	-- to convert from pixel
+	-- coordinate to tile coordinate)
 	hsp1=mget(flr(hx1/8),flr(hy1/8)) 
 	hsp2=mget(flr(hx2/8),flr(hy2/8)) 
 
-	-- check flag on sprite for adjacent tile
+	-- check flag on sprite for 
+	-- adjacent tile
 	local has_flag1=fget(hsp1,flag) 
 	local has_flag2=fget(hsp2,flag) 
 
@@ -256,86 +355,107 @@ function map_collision(obj,dir,flag)
 		return false
 	end -- end if/else
 
-end -- end map_collision()
--- use this function inside move_player()
--- for example: if map_collision(player,"down",0) checks for flag 0 below player
+end -- end mcollide()
 
--- this function draws two dots on the tile adjacent to the player, depending on which direction they are moving
+-- use this function in
+-- move_plyr() -- for example:
+-- if mcollide(plyr,"down",0)
+-- checks for flag 0 below the
+-- player
+
+-- this function draws two dots
+-- on the tile adjacent to the
+-- player, depending on which
+-- direction they are moving
 function set_hitbox()
 
 	-- position of tile to left
-	if btn(0) then 
-		hx1=player.x-1
-		hy1=player.y
+	if btn(⬅️) then 
+		hx1=plyr.x-1
+		hy1=plyr.y
 
 		hx2=hx1 
-		hy2=player.y+player.h-1
+		hy2=plyr.y+plyr.h-1
 		
 	-- position of tile to right
-	elseif btn(1) then 
-		hx1=player.x+player.w
-		hy1=player.y
+	elseif btn(➡️) then 
+		hx1=plyr.x+plyr.w
+		hy1=plyr.y
 
 		hx2=hx1 
-		hy2=player.y+player.h-1
+		hy2=plyr.y+plyr.h-1
 	
 	-- position of tile above
-	elseif btn(2) or btn(5) then 
-		hx1=player.x
-		hy1=player.y-1
+	elseif btn(⬆️) or btn(❎) then 
+		hx1=plyr.x
+		hy1=plyr.y-1
 
-		hx2=player.x+player.w-1 
+		hx2=plyr.x+plyr.w-1 
 		hy2=hy1 
 		
 	-- position of tile below
 	else 
-		hx1=player.x
-		hy1=player.y+player.h
+		hx1=plyr.x
+		hy1=plyr.y+plyr.h
 
-		hx2=player.x+player.w-1
+		hx2=plyr.x+plyr.w-1
 		hy2=hy1
 	end -- end if/elseif
 
-	-- get sprite number of adjacent tile (divide by 8 to convert from pixel coordinate to tile coordinate)
+	-- get sprite number of
+	-- adjacent tile (divide by 8
+	-- to convert from pixel
+	-- coordinate to tile coordinate)
 	hsp1=mget(flr(hx1/8),flr(hy1/8)) 
 	hsp2=mget(flr(hx2/8),flr(hy2/8)) 
 
 end -- end set_hitbox()
 -->8
-
--- press z to swap sprite
+-- swap sprite function
 function swap_sprite()
-	if btnp(4) then
+
+	-- map and sprite widths
+	map_end = 120
+	sm_spr = 8
+	lg_spr = 24
 	
-	 -- store player location
-	temp_x=player.x
-	temp_y=player.y
+	-- size difference
+	diff = lg_spr-sm_spr
+
+	-- press z/c to swap sprite
+	if btnp(🅾️) then
+	
+		-- store player location
+		temp_x=plyr.x
+		temp_y=plyr.y
 		
 		-- big to small
-	 if big==true then
-		big = false
-	  	temp_y+=16 -- adjust y pos
+		if big==true then
+			big = false
+			temp_y+=diff -- adjust y pos
 	  
-	 -- small to big
-	 elseif big==false then
-	  	big=true
-	  	temp_y-=16 -- adjust y pos
+		-- small to big
+		elseif big==false then
+			big=true
+			temp_y-=diff -- adjust y pos
 	  
-	  	-- right edge correction
-	  	if player.x>=96 then
-	   		temp_x-=(24+player.x-120)
-	  	end -- end if x>96
+			-- right edge correction
+			if plyr.x>=map_end-lg_spr
+			then
+				temp_x-=lg_spr+plyr.x-map_end
+			end -- end if x>map_end-lg_spr
 	  
-	 end -- end if big t/f
+		end -- end if big t/f
 	 
-	 -- re-make player to apply
-	 make_player()
+		-- re-make player to apply
+		make_plyr()
 	 
-	 -- adjust player position
-	 player.x=temp_x
-	 player.y=temp_y
+		-- adjust player position
+		plyr.x=temp_x
+		plyr.y=temp_y
 	 
-	end -- end if btnp(4)
+	end -- end if btnp(🅾️)
+	
 end -- end swap_sprite()
 __gfx__
 0000000000666600bbbbbbbbbbbbbbbbbbbbbbbb0000000000000000aaaaaaaaaaaaaaaaaaaaaaaa000000000000000077777777777777777777777700000000
