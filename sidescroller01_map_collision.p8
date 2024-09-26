@@ -201,7 +201,7 @@ function move_plyr()
 	-- to be held down)
 	if (btnp(⬆️) or btnp(❎))
 	
-	--	w/o the second condition,
+	-- w/o the second condition,
 	-- the player would be able 
 	-- to jump indefinitely
  	and plyr.landed then
