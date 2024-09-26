@@ -128,9 +128,25 @@ end -- end move_player()
 function set_camera()
 
 	-- determine top-left screen coordinates (in pixels) based on player's x,y coords
-	-- multiply by 8 to convert tiles to pixels
-	cam_x=8*flr(player.x/16)*16
-	cam_y=8*flr(player.y/16)*16
+
+	tilesize=8 -- each tile is 8x8 pixels
+	screensize=16 -- each screen is 16 tiles
+
+	-- calculate how many screens to the right of the origin (0,0) the player is
+	screenx = flr(player.x/screensize) 
+
+	-- calculate how many screens below the origin (0,0) the player is
+	screeny = flr(player.y/screensize) 
+
+	-- multiply the camera coordinates by the number of pixels per tile
+	-- to convert the player's tile coordinate to a pixel value
+	cam_x = screenx*tilesize 
+	cam_y = screeny*tilesize 
+
+	-- multiply the camera coordinates by the number of tiles per screen
+	-- to position it at the origin of the current screen (set of 16 tiles)
+	cam_x*=screensize
+	cam_y*=screensize
 	
 	-- position the camera
 	camera(cam_x,cam_y)
