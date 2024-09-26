@@ -13,8 +13,8 @@ __lua__
 -- runs once at start
 function _init()
 
-	-- global variables and objects
-	solid=0 -- map tile flag
+	-- map tile flag
+	solid=0
 	
 	-- 8x8px sprite if false
 	-- 24x24px sprite if true
@@ -222,26 +222,6 @@ function move_plyr()
 	plyr.tile_x=flr(plyr.x/8)
 	plyr.tile_y=flr(plyr.y/8)
 
-	-- collide with wall on left
-	if mcollide(plyr,"left",solid)
-	
-	-- allows movement to right
-	and not btn(➡️)
-	
-	then
-		plyr.dx=0 -- stop moving l/r
-	end -- end if mcollide
-
- 	-- collide with wall on right
-	if mcollide(plyr,"right",solid)
-	
-	-- allows movement to left
-	and not btn(⬅️)
-	
-	then
-		plyr.dx=0 -- stop moving l/r
-	end -- end if mcollide
-
 	-- if dy is positive, the 
 	-- player is moving down
 	-- (falling), so they have
@@ -271,14 +251,38 @@ function move_plyr()
 	end -- end if mcollide down
 	
 	-- stop moving up when there's
-	-- collision with solid tile
+	-- collision with a solid tile 
 	-- above the player
 	if mcollide(plyr,"up",solid)
 	and plyr.dy < 0
 	then
-		plyr.landed=false 
+		plyr.landed=true 
 		plyr.dy=0 -- stop jumping
 	end -- end if mcollide up
+
+	-- collide with solid on left
+	if mcollide(plyr,"left",solid)
+	
+	-- allows movement to right
+	and not btn(➡️)
+	
+	then
+		plyr.dx=0 -- stop moving l/r
+	end -- end if mcollide
+
+ 	-- collide with solid on right
+	if mcollide(plyr,"right",solid)
+	
+	-- allows movement to left
+	and not btn(⬅️)
+	
+	then
+		plyr.dx=0 -- stop moving l/r
+
+		-- don't get stuck in wall
+		plyr.x-=
+		((plyr.x+plyr.w+1)%8)-1
+	end -- end if mcollide
 
 	-- update x and y positions by
 	-- the change calculated
