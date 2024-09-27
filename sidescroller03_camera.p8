@@ -114,7 +114,7 @@ function make_plyr()
 	
 end -- end make_plyr()
 
--- move player
+-- move plyr
 function move_plyr()
 
 	-- dx and dy are used to 
