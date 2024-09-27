@@ -35,7 +35,7 @@ function _init()
 
 	-- for troubleshooting clipping
 	clipped=false 
-	lastclip="" -- end of tab 1
+	lastclip="" -- tab 1
 	
 end -- end _init()
 
@@ -68,11 +68,6 @@ function _draw()
 	and plyr.tile_y then
 		print("tile:   "..plyr.tile_x..","..plyr.tile_y,12,18,10)
 	end -- end if
-		
-	-- last applied correction
-	if clipped then 
-		print(clipx,12,74,7)
-	end
 
 	-- print left correction
 	print("correction",12,34,8)
@@ -296,10 +291,10 @@ function move_plyr()
 	
 	-- apply speed limit
 	if plyr.dx < -maxdx then
-		plyr.dx = -maxdx
+		--plyr.dx = -maxdx
 	end
 	if plyr.dx > maxdx then
-		plyr.dx = maxdx
+		--plyr.dx = maxdx
 	end
 	
 	-- correct position on left
@@ -309,8 +304,19 @@ function move_plyr()
 	
 	-- prevent overcorrection
 	if abs(fixl) > 4 then
-		fixl = 1-fixl
-	end
+		fixl1=fixl --precorrection
+		fixl = 8-abs(fixl)
+		fixl2=fixl -- postcorrection
+		
+		-- for printing the x position
+		-- and correction amount of the
+		-- last clip (_draw, tab 0)
+		if plyr.x < 8 then 
+			clipped=true
+			lastclip=plyr.x..","..fixl1..","..fixl2
+		end -- end if plyr.x < 8
+		
+	end -- end if abs(fixl) > 4
 	
 	-- collide with solid on left
 	if plyr.dx < 0 and
@@ -341,14 +347,6 @@ function move_plyr()
 	if plyr.x<0 then 
 		plyr.x=0
 	end -- end if x<0
-
-	-- for printing the x position
-	-- and correction amount of the
-	-- last clip (_draw, tab 0)
-	if plyr.x < 8 then 
-		clipped=true
-		lastclip=plyr.x..","..fixl
-	end
 
 end -- end move_player()
 -->8
