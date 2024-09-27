@@ -348,7 +348,7 @@ function move_plyr()
 		plyr.x=0
 	end -- end if x<0
 
-end -- end move_player()
+end -- end move_plyr()
 -->8
 -- map collision function
 function mcollide(obj,dir,flag)

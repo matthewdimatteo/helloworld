@@ -48,7 +48,7 @@ end -- end _draw()
 -->8
 -- player functions
 
--- make_plyr()
+-- make player
 function make_plyr()
 
 	-- player object
@@ -85,7 +85,7 @@ function make_plyr()
 	
 end -- end make_plyr()
 
--- move plyr
+-- move player
 function move_plyr()
 	
 	-- dx and dy are used to 

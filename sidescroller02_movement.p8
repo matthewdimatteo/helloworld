@@ -55,7 +55,7 @@ end -- end _draw()
 -->8
 -- player functions
 
--- make_player()
+-- make player
 function make_plyr()
 
 	-- player object
