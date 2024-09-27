@@ -101,10 +101,6 @@ function make_plyr()
 	plyr.dx=0
 	plyr.dy=0
 
-	-- max speed
-	plyr.max_dx=2
-	plyr.max_dy=3
-
 	-- acceleration
 	plyr.xspd=0.5
 	plyr.yspd=4
@@ -211,21 +207,6 @@ function move_plyr()
 		plyr.landed=true 
 		plyr.dy=0 -- stop jumping
 	end -- end if mcollide up
-
-	-- set speed limit
-	if big == true then
-		maxdx=2
-	else
-		maxdx=3
-	end
-	
-	-- apply speed limit
-	if plyr.dx < -maxdx then
-		plyr.dx = -maxdx
-	end
-	if plyr.dx > maxdx then
-		plyr.dx = maxdx
-	end
 
 	-- correct position on left
 	-- and right

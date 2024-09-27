@@ -191,21 +191,6 @@ function move_plyr()
 		plyr.dy=0 -- stop jumping
 	end -- end if mcollide up
 
-	-- set speed limit
-	if big == true then
-		maxdx=2
-	else
-		maxdx=3
-	end
-	
-	-- apply speed limit
-	if plyr.dx < -maxdx then
-		plyr.dx = -maxdx
-	end
-	if plyr.dx > maxdx then
-		plyr.dx = maxdx
-	end
-
 	-- correct position on left
 	-- and right
 	fixl=1-((plyr.x+1)%8)
