@@ -101,7 +101,7 @@ function make_plyr()
 	plyr.dx=0
 	plyr.dy=0
 
-	-- acceleration
+	-- speed
 	plyr.xspd=0.5
 	plyr.yspd=4
 
