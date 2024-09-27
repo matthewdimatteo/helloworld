@@ -32,6 +32,11 @@ function _init()
 	hy2=0
 	hsp1=0
 	hsp2=0
+
+	-- for troubleshooting clipping
+	clipped=false 
+	lastclip="" -- end of tab 1
+	
 end -- end _init()
 
 -- runs 30x per second
@@ -64,19 +69,29 @@ function _draw()
 		print("tile:   "..plyr.tile_x..","..plyr.tile_y,12,18,10)
 	end -- end if
 		
+	-- last applied correction
+	if clipped then 
+		print(clipx,12,74,7)
+	end
+
 	-- print left correction
 	print("correction",12,34,8)
-	print("left wall",12,42,8)
+	print("to left",12,42,8)
 	print("x:"..plyr.x,12,50,8)
 	print("+ "..fixl,12,58,8)
 	print("= "..plyr.x+fixl,12,66,8)
  
 	-- print right correction
-	print("right wall",62,42,8)
+	print("to right",62,42,8)
 	print("x:"..plyr.x,62,50,8)
 	print("- "..fixr,62,58)
 	print("= "..plyr.x-fixr,62,66)
 
+	-- last applied correction
+	if clipped then 
+		print(lastclip,12,74,7)
+	end
+	
 	-- draw collision hitboxes
 	rect(hx1,hy1,hx1,hy1,8) 
 	rect(hx2,hy2,hx2,hy2,8)
@@ -292,6 +307,11 @@ function move_plyr()
 	fixl=1-((plyr.x+1)%8)
 	fixr=((plyr.x+plyr.w+1)%8)-1
 	
+	-- prevent overcorrection
+	if abs(fixl) > 4 then
+		fixl = 1-fixl
+	end
+	
 	-- collide with solid on left
 	if plyr.dx < 0 and
 	mcollide(plyr,"left",solid)
@@ -321,6 +341,14 @@ function move_plyr()
 	if plyr.x<0 then 
 		plyr.x=0
 	end -- end if x<0
+
+	-- for printing the x position
+	-- and correction amount of the
+	-- last clip (_draw, tab 0)
+	if plyr.x < 8 then 
+		clipped=true
+		lastclip=plyr.x..","..fixl
+	end
 
 end -- end move_player()
 -->8
