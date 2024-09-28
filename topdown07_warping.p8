@@ -2,7 +2,7 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 -- top-down series
--- example 08: warping
+-- example 07: warping
 -- by matthew dimatteo
 
 -- runs once at start

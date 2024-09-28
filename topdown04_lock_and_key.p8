@@ -2,7 +2,7 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 -- top-down series
--- example 05: lock and key
+-- example 04: lock and key
 -- by matthew dimatteo
 
 -- runs once at start
