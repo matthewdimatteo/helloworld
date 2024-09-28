@@ -6,9 +6,12 @@ __lua__
 -- by matthew dimatteo
 
 -- tab 0: game loop
--- tab 1: player functions
--- tab 2: animation function
--- tab 3: map collision function
+-- tab 1: make player
+-- tab 2: move player
+-- tab 3: jump
+-- tab 4: animate player
+-- tab 5: collision checks
+-- tab 6: map collision function
 
 -- runs once at start
 function _init()
@@ -18,9 +21,10 @@ function _init()
 	fric=0.85
 
 	-- map tile flags
-	ground=0
+	solid=0
 
-	-- baseline value for player animation timer
+	-- baseline value for 
+	-- player animation timer
 	anim_time=0
 
 	-- object initialization
@@ -30,8 +34,8 @@ end -- end _init()
 
 -- runs 30x per second
 function _update()
-	move_plyr() -- tab 1
-	anim_plyr() -- tab 2
+	move_plyr() -- tab 2
+	anim_plyr() -- tab 4
 end -- end _update()
 
 -- runs 30x per second
@@ -55,9 +59,7 @@ function _draw()
 	spr(plyr.n,plyr.x,plyr.y,1,1,plyr.flip) -- draw player
 end -- end _draw()
 -->8
--- player functions
-
--- make_player()
+-- make player
 function make_plyr()
 
 	-- player object
@@ -85,14 +87,11 @@ function make_plyr()
 	plyr.xspd=0.5
 	plyr.yspd=4
 
-	-- animation timer
-	anim=0
-
 	-- player state
 	plyr.landed=false
 	
 end -- end make_plyr()
-
+-->8
 -- move player
 function move_plyr()
 
@@ -141,100 +140,10 @@ function move_plyr()
 		
 	end -- end if btn(➡️)
 
-	-- press up or x to jump
-	-- (btnp does not require key
-	-- to be held down)
-	if (btnp(⬆️) or btnp(❎))
-	
-	-- w/o the second condition,
-	-- the player would be able 
-	-- to jump indefinitely
- 	and plyr.landed then
- 
-		-- subtract from change in y
-		-- to move up on the screen
-		plyr.dy-=plyr.yspd
-		
-		-- set boolean to false to
-		-- prevent double jump
-		plyr.landed=false
-		
-	end -- end if btnp(⬆️/❎)
-
-	-- stop falling when touching
-	-- a solid tile below player
-	if mcollide(plyr,"down",solid)
-	and plyr.dy > 0
-	then
-		plyr.landed=true
-		plyr.dy=0 -- stop falling
-		
-		-- because of vertical speed,
-		-- the player can fall a few
-		-- px into the floor. this
-		-- calculates how many px and
-		-- re-adjusts y (credit to 
-		-- nerdyteachers.com for this
-		-- formula)
-		plyr.y-=
-		((plyr.y+plyr.h+1)%8)-1
-
-	end -- end if mcollide down
-
-	-- stop moving up when there's
-	-- collision with a solid tile 
-	-- above the player
-	if mcollide(plyr,"up",solid)
-	and plyr.dy < 0
-	then
-		plyr.landed=true 
-		plyr.dy=0 -- stop jumping
-	end -- end if mcollide up
-
-	-- set speed limit
-	if big == true then
-		maxdx=2
-	else
-		maxdx=3
-	end
-	
-	-- apply speed limit
-	if plyr.dx < -maxdx then
-		plyr.dx = -maxdx
-	end
-	if plyr.dx > maxdx then
-		plyr.dx = maxdx
-	end
-
-	-- correct position on left
-	-- and right
-	fixl=1-((plyr.x+1)%8)
-	fixr=((plyr.x+plyr.w+1)%8)-1
-	
-	-- prevent overcorrection
-	if abs(fixl) > 4 then
-		fixl = 8-abs(fixl)
-	end
-	
-	-- collide with solid on left
-	if plyr.dx < 0 and
-	mcollide(plyr,"left",solid)
-	then
-		plyr.dx=0 -- stop moving l/r
-			
-		-- don't get stuck in wall
-		plyr.x+=fixl
-	end -- end if plyr.dx<0
-
- 	-- collide with solid on right
-	if plyr.dx > 0 and
-	mcollide(plyr,"right",solid)
-	then
-		plyr.dx=0 -- stop moving l/r
-
-		-- don't get stuck in wall
-		plyr.x-=fixr
-	end -- end if plyr.dx>0
+	jump() -- tab 3
+	check_updown() -- tab 4
+	correctx() -- tab 4
+	check_leftright() -- tab 4
 
 	-- update x,y pos by dx,dy
 	plyr.x+=plyr.dx
@@ -244,6 +153,30 @@ function move_plyr()
 	if plyr.x<0 then 
 		plyr.x=0
 	end -- end if x<0
+
+end -- end move_player()
+-->8
+-- jump function
+function jump()
+	-- press up or x to jump
+	-- (btnp does not require key
+	-- to be held down)
+	if (btnp(⬆️) or btnp(❎))
+	
+	-- w/o the second condition,
+	-- the player would be able 
+	-- to jump indefinitely
+	and plyr.landed then
+	
+		-- subtract from change in y
+		-- to move up on the screen
+		plyr.dy-=plyr.yspd
+		
+		-- set boolean to false to
+		-- prevent double jump
+		plyr.landed=false
+		
+	end -- end if btnp(⬆️/❎)
 
 	-- jumping sprite
 	if plyr.landed == false then 
@@ -255,15 +188,15 @@ function move_plyr()
 		plyr.n=1
 	end -- end if plyr.landed
 
-end -- end move_player()
+end -- end function jump()
 -->8
--- animation function
+-- animate player
 function anim_plyr()
 
-	-- switch to jumping sprite
+	-- jumping sprite
 	if plyr.landed == false then 
 		plyr.n=6
-	end -- end if plyr.jumping
+	end -- end if false
 
 	-- default sprite
 	if plyr.landed then 
@@ -283,76 +216,159 @@ function anim_plyr()
 
 end -- end animate_player()
 -->8
--- map collision function
-	function mcollide(obj,dir,flag)
+-- collision checks
 
-		-- this function checks two
-		-- points on the tile adjacent
-		-- to the player: hx1,hy1 and
-		-- hx2,hy2 -- we can then use
-		-- these coordinates to look up
-		-- the adjacent tile's sprite
-		-- number and whether it has
-		-- a flag turned on
+-- check collision up/down
+function check_updown()
+	-- mcollide() function: tab 6
+	-- stop falling when touching
+	-- a solid tile below player
+	if mcollide(plyr,"down",solid)
+	and plyr.dy > 0
+	then
+		plyr.landed=true
+		plyr.dy=0 -- stop falling
 		
-		-- position of tile to left
-		if dir=="left" then 
-			hx1=obj.x-1
-			hy1=obj.y
+		-- because of vertical speed,
+		-- the player can fall a few
+		-- px into the floor. this
+		-- calculates how many px and
+		-- re-adjusts y (credit to 
+		-- nerdyteachers.com for this
+		-- formula)
+		plyr.y-=
+		((plyr.y+plyr.h+1)%8)-1
+
+	end -- end if mcollide down
 	
-			hx2=hx1
-			hy2=obj.y+obj.h-1
-			
-		-- position of tile to right
-		elseif dir=="right" then 
-			hx1=obj.x+obj.w
-			hy1=obj.y
+	-- stop moving up when there's
+	-- collision with a solid tile 
+	-- above the player
+	if mcollide(plyr,"up",solid)
+	and plyr.dy < 0
+	then
+		plyr.landed=true 
+		plyr.dy=0 -- stop jumping
+	end -- end if mcollide up
+end -- end function check_updown()
+
+-- correct x position
+function correctx()
+	-- correct position on left
+	-- and right
+	fixl=1-((plyr.x+1)%8)
+	fixr=((plyr.x+plyr.w+1)%8)-1
 	
-			hx2=hx1 
-			hy2=obj.y+obj.h-1
+	-- prevent overcorrection
+	if abs(fixl) > 4 then
+		fixl1=fixl --precorrection
+		fixl = 8-abs(fixl)
+		fixl2=fixl -- postcorrection
 		
-		-- position of tile above
-		elseif dir=="up" then 
-			hx1=obj.x
-			hy1=obj.y-1
-	
-			hx2=obj.x+obj.w-1 
-			hy2=hy1 
+		-- for printing the x position
+		-- and correction amount of the
+		-- last clip (_draw, tab 0)
+		if plyr.x < 8 then 
+			clipped=true
+			lastclip=plyr.x..","..fixl1..","..fixl2
+		end -- end if plyr.x < 8
+		
+	end -- end if abs(fixl) > 4
+end -- end function correctx()
+
+-- check collision left/right
+-- mcollide() function: tab 6
+function check_leftright()
+	-- collide with solid on left
+	if plyr.dx < 0 and
+	mcollide(plyr,"left",solid)
+	then
+		plyr.dx=0 -- stop moving l/r
 			
-		-- position of tile below
-		elseif dir=="down" then 
-			hx1=obj.x
-			hy1=obj.y+obj.h
+		-- don't get stuck in wall
+		plyr.x+=fixl
+	end -- end if plyr.dx<0
+
+		-- collide with solid on right
+	if plyr.dx > 0 and
+	mcollide(plyr,"right",solid)
+	then
+		plyr.dx=0 -- stop moving l/r
+
+		-- don't get stuck in wall
+		plyr.x-=fixr
+	end -- end if plyr.dx>0
+end -- end function check_leftright
+-->8
+-- map collision function
+function mcollide(obj,dir,flag)
+
+	-- this function checks two
+	-- points on the tile adjacent
+	-- to the player: hx1,hy1 and
+	-- hx2,hy2 -- we can then use
+	-- these coordinates to look up
+	-- the adjacent tile's sprite
+	-- number and whether it has
+	-- a flag turned on
 	
-			hx2=obj.x+obj.w-1
-			hy2=hy1
-		end -- end if/elseif
+	-- position of tile to left
+	if dir=="left" then 
+		hx1=obj.x-1
+		hy1=obj.y
+
+		hx2=hx1
+		hy2=obj.y+obj.h-1
+		
+	-- position of tile to right
+	elseif dir=="right" then 
+		hx1=obj.x+obj.w
+		hy1=obj.y
+
+		hx2=hx1 
+		hy2=obj.y+obj.h-1
 	
-		-- get sprite number of
-		-- adjacent tile (divide by 8
-		-- to convert from pixel
-		-- coordinate to tile coordinate)
-		hsp1=mget(flr(hx1/8),flr(hy1/8)) 
-		hsp2=mget(flr(hx2/8),flr(hy2/8)) 
-	
-		-- check flag on sprite for 
-		-- adjacent tile
-		local has_flag1=fget(hsp1,flag) 
-		local has_flag2=fget(hsp2,flag) 
-	
-		if has_flag1 or has_flag2 then
-			return true
-		else
-			return false
-		end -- end if/else
-	
-	end -- end mcollide()
-	
-	-- use this function in
-	-- move_plyr() -- for example:
-	-- if mcollide(plyr,"down",0)
-	-- checks for flag 0 below the
-	-- player
+	-- position of tile above
+	elseif dir=="up" then 
+		hx1=obj.x
+		hy1=obj.y-1
+
+		hx2=obj.x+obj.w-1 
+		hy2=hy1 
+		
+	-- position of tile below
+	elseif dir=="down" then 
+		hx1=obj.x
+		hy1=obj.y+obj.h
+
+		hx2=obj.x+obj.w-1
+		hy2=hy1
+	end -- end if/elseif
+
+	-- get sprite number of
+	-- adjacent tile (divide by 8
+	-- to convert from pixel
+	-- coordinate to tile coordinate)
+	hsp1=mget(flr(hx1/8),flr(hy1/8)) 
+	hsp2=mget(flr(hx2/8),flr(hy2/8)) 
+
+	-- check flag on sprite for 
+	-- adjacent tile
+	local has_flag1=fget(hsp1,flag) 
+	local has_flag2=fget(hsp2,flag) 
+
+	if has_flag1 or has_flag2 then
+		return true
+	else
+		return false
+	end -- end if/else
+
+end -- end mcollide()
+-- use this function in
+-- move_plyr() -- for example:
+-- if mcollide(plyr,"down",0)
+-- checks for flag 0 below the
+-- player
 __gfx__
 00000000000000000000000000000000000000000000000000000000009499000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000008800094999900750057000000000000000000000000000000000000000000000000000000000
