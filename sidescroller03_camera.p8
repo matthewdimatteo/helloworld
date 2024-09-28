@@ -41,7 +41,7 @@ end -- end _init()
 -- runs 30x per second
 function _update()
 	move_plyr() -- tab 1
-	move_cam() -- tab 4
+	move_cam() -- tab 3
 end -- end _update()
 
 -- runs 30x per second
