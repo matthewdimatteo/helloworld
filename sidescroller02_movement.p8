@@ -168,7 +168,7 @@ function jump()
 	-- w/o the second condition,
 	-- the player would be able 
 	-- to jump indefinitely
-		and plyr.landed then
+	and plyr.landed then
 	
 		-- subtract from change in y
 		-- to move up on the screen
