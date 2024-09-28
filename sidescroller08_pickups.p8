@@ -2,7 +2,7 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 -- sidescroller series
--- example 08: object tables
+-- example 08: pickups
 -- by matthew dimatteo
 
 -- tab 0: game loop
