@@ -320,7 +320,8 @@ end -- end mcollide()
 -- camera function
 function move_cam()
 
-	camx=plyr.x-64+plyr.w/2 -- center camera on player
+	-- center camera on player
+	camx=plyr.x-64+plyr.w/2 
 
 	-- constrain to left edge
 	if camx<map_start then 
