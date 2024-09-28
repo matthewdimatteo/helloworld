@@ -6,9 +6,14 @@ __lua__
 -- by matthew dimatteo
 
 -- tab 0: game loop
--- tab 1: player functions
--- tab 2: map collision function
--- tab 3: swap sprite function
+-- tab 1: make player
+-- tab 2: move player
+-- tab 3: jump function
+-- tab 4: check collision ⬆️/⬇️
+-- tab 5: correct x position
+-- tab 6: check collision ⬅️/➡️
+-- tab 7: map collision function
+-- tab 8: swap sprite function
 
 -- runs once at start
 function _init()
@@ -41,9 +46,9 @@ end -- end _init()
 
 -- runs 30x per second
 function _update()
-	move_plyr() -- tab 1
-	set_hitbox() -- tab 2 
-	swap_sprite() -- tab 3	
+	move_plyr() -- tab 2
+	set_hitbox() -- tab 7 
+	swap_sprite() -- tab 8	
 end -- end _update()
 
 -- runs 30x per second
@@ -117,8 +122,6 @@ function _draw()
 	
 end -- end _draw()
 -->8
--- player functions
-
 -- make player
 function make_plyr()
 	
@@ -169,7 +172,7 @@ function make_plyr()
 	plyr.landed=false
 	
 end -- end make_plyr()
-
+-->8
 -- move player
 function move_plyr()
 	
@@ -218,6 +221,25 @@ function move_plyr()
 		
 	end -- end if btn(➡️)
 
+	jump() -- tab 3
+	check_updown() -- tab 4
+	correctx() -- tab 5
+	check_leftright() -- tab 6
+
+	-- update x and y positions by
+	-- the change calculated
+	plyr.x+=plyr.dx
+	plyr.y+=plyr.dy
+ 
+	-- keep player on screen
+	if plyr.x<0 then 
+		plyr.x=0
+	end -- end if x<0
+
+end -- end move_plyr()
+-->8
+-- jump function
+function jump()
 	-- press up or x to jump
 	-- (btnp does not require key
 	-- to be held down)
@@ -237,21 +259,11 @@ function move_plyr()
 		plyr.landed=false
 		
 	end -- end if btnp(⬆️/❎)
-
-	-- determine tile coordinates
-	-- for player position
-	-- (tiles are 8x8 pixels)
-	plyr.tile_x=flr(plyr.x/8)
-	plyr.tile_y=flr(plyr.y/8)
-
-	-- if dy is positive, the 
-	-- player is moving down
-	-- (falling), so they have
-	-- not landed yet
-	if plyr.dy>0 then	
-		plyr.landed=false 
-	end -- end if dy>0
-
+end -- end function jump()
+-->8
+-- check collision up/down
+function check_updown()
+	-- mcollide() function: tab 7
 	-- stop falling when touching
 	-- a solid tile below player
 	if mcollide(plyr,"down",solid)
@@ -281,22 +293,10 @@ function move_plyr()
 		plyr.landed=true 
 		plyr.dy=0 -- stop jumping
 	end -- end if mcollide up
-	
-	-- set speed limit
-	if big == true then
-		maxdx=2
-	else
-		maxdx=3
-	end
-	
-	-- apply speed limit
-	if plyr.dx < -maxdx then
-		--plyr.dx = -maxdx
-	end
-	if plyr.dx > maxdx then
-		--plyr.dx = maxdx
-	end
-	
+end -- end function check_updown()
+-->8
+-- correct x position
+function correctx()
 	-- correct position on left
 	-- and right
 	fixl=1-((plyr.x+1)%8)
@@ -317,7 +317,11 @@ function move_plyr()
 		end -- end if plyr.x < 8
 		
 	end -- end if abs(fixl) > 4
-	
+end -- end function correctx()
+-->8
+-- check collision left/right
+-- mcollide() function: tab 7
+function check_leftright()
 	-- collide with solid on left
 	if plyr.dx < 0 and
 	mcollide(plyr,"left",solid)
@@ -337,18 +341,7 @@ function move_plyr()
 		-- don't get stuck in wall
 		plyr.x-=fixr
 	end -- end if plyr.dx>0
-
-	-- update x and y positions by
-	-- the change calculated
-	plyr.x+=plyr.dx
-	plyr.y+=plyr.dy
- 
-	-- keep player on screen
-	if plyr.x<0 then 
-		plyr.x=0
-	end -- end if x<0
-
-end -- end move_plyr()
+end -- end function check_leftright
 -->8
 -- map collision function
 function mcollide(obj,dir,flag)
@@ -414,7 +407,6 @@ function mcollide(obj,dir,flag)
 	end -- end if/else
 
 end -- end mcollide()
-
 -- use this function in
 -- move_plyr() -- for example:
 -- if mcollide(plyr,"down",0)
@@ -506,13 +498,19 @@ function swap_sprite()
 		end -- end if big t/f
 	 
 		-- re-make player to apply
-		make_plyr()
+		make_plyr() -- tab 1
 	 
 		-- adjust player position
 		plyr.x=temp_x
 		plyr.y=temp_y
 	 
 	end -- end if btnp(🅾️)
+
+	-- determine tile coordinates
+	-- for player position
+	-- (tiles are 8x8 pixels)
+	plyr.tile_x=flr(plyr.x/8)
+	plyr.tile_y=flr(plyr.y/8)
 	
 end -- end swap_sprite()
 __gfx__
