@@ -76,7 +76,7 @@ end -- end _draw()
 -- make player
 function make_plyr()
 	
-	-- player object
+	-- create player table
 	plyr={}
 	
 	-- sprite number
@@ -226,7 +226,7 @@ function check_terrain()
 		fric = 0.92 -- faster
 		terrain = "ice"
 	end -- end if ice
-	
+
 end -- end function check_terrain()
 -->8
 -- check collision up/down

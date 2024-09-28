@@ -125,7 +125,7 @@ end -- end _draw()
 -- make player
 function make_plyr()
 	
-	-- create new player table
+	-- create player table
 	plyr={} 
 	
 	-- big sprite (24x24 pixels)

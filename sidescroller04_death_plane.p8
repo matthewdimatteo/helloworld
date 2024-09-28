@@ -52,7 +52,7 @@ end -- end _draw()
 -- make player
 function make_plyr()
 
-	-- player object
+	-- create player table
 	plyr={}
 	
 	-- sprite number
@@ -184,6 +184,7 @@ end -- end function jump()
 -- death plane
 function death_plane()
 	-- collision with death plane
+	-- mcollide() function: tab 6
 	if mcollide(plyr,"down",death) then
 		sfx(2) -- death sound
 

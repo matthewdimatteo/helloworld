@@ -59,7 +59,7 @@ end -- end _draw()
 -- make player
 function make_plyr()
 
-	-- player object
+	-- create player table
 	plyr={}
 	
 	-- sprite number

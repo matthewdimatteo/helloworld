@@ -6,9 +6,12 @@ __lua__
 -- by matthew dimatteo
 
 -- tab 0: game loop
--- tab 1: player function
--- tab 2: map collision function
--- tab 3: camera function
+-- tab 1: make player
+-- tab 2: move player
+-- tab 3: jump
+-- tab 4: collision checks
+-- tab 5: map collision function
+-- tab 6: camera function
 
 -- runs once at start
 function _init()
@@ -41,7 +44,7 @@ end -- end _init()
 -- runs 30x per second
 function _update()
 	move_plyr() -- tab 1
-	move_cam() -- tab 3
+	move_cam() -- tab 6
 end -- end _update()
 
 -- runs 30x per second
@@ -62,12 +65,10 @@ function _draw()
 	spr(plyr.n,plyr.x,plyr.y,1,1,plyr.flip)
 end -- end _draw()
 -->8
--- player functions
-
 -- make player
 function make_plyr()
 
-	-- player object
+	-- create player table
 	plyr={}
 	
 	-- sprite number
@@ -96,7 +97,7 @@ function make_plyr()
 	plyr.landed=false
 	
 end -- end make_plyr()
-
+-->8
 -- move player
 function move_plyr()
 
@@ -145,6 +146,24 @@ function move_plyr()
 		
 	end -- end if btn(➡️)
 
+	jump() -- tab 3
+	check_updown() -- tab 4
+	correctx() -- tab 4
+	check_leftright() -- tab 4
+
+	-- update x,y pos by dx,dy
+	plyr.x+=plyr.dx
+	plyr.y+=plyr.dy
+
+	-- keep player on screen
+	if plyr.x<0 then 
+		plyr.x=0
+	end -- end if x<0
+
+end -- end move_plyr()
+-->8
+-- jump function
+function jump()
 	-- press up or x to jump
 	-- (btnp does not require key
 	-- to be held down)
@@ -153,8 +172,8 @@ function move_plyr()
 	-- w/o the second condition,
 	-- the player would be able 
 	-- to jump indefinitely
- 	and plyr.landed then
- 
+	and plyr.landed then
+	
 		-- subtract from change in y
 		-- to move up on the screen
 		plyr.dy-=plyr.yspd
@@ -165,6 +184,23 @@ function move_plyr()
 		
 	end -- end if btnp(⬆️/❎)
 
+	-- jumping sprite
+	if plyr.landed == false then 
+		plyr.n=6
+	end -- end if false
+
+	-- default sprite
+	if plyr.landed then 
+		plyr.n=1
+	end -- end if plyr.landed
+
+end -- end function jump()
+-->8
+-- collision checks
+
+-- check collision up/down
+function check_updown()
+	-- mcollide() function: tab 5
 	-- stop falling when touching
 	-- a solid tile below player
 	if mcollide(plyr,"down",solid)
@@ -184,7 +220,7 @@ function move_plyr()
 		((plyr.y+plyr.h+1)%8)-1
 
 	end -- end if mcollide down
-
+	
 	-- stop moving up when there's
 	-- collision with a solid tile 
 	-- above the player
@@ -194,7 +230,10 @@ function move_plyr()
 		plyr.landed=true 
 		plyr.dy=0 -- stop jumping
 	end -- end if mcollide up
+end -- end function check_updown()
 
+-- correct x position
+function correctx()
 	-- correct position on left
 	-- and right
 	fixl=1-((plyr.x+1)%8)
@@ -202,9 +241,24 @@ function move_plyr()
 	
 	-- prevent overcorrection
 	if abs(fixl) > 4 then
+		fixl1=fixl --precorrection
 		fixl = 8-abs(fixl)
-	end
-	
+		fixl2=fixl -- postcorrection
+		
+		-- for printing the x position
+		-- and correction amount of the
+		-- last clip (_draw, tab 0)
+		if plyr.x < 8 then 
+			clipped=true
+			lastclip=plyr.x..","..fixl1..","..fixl2
+		end -- end if plyr.x < 8
+		
+	end -- end if abs(fixl) > 4
+end -- end function correctx()
+
+-- check collision left/right
+-- mcollide() function: tab 5
+function check_leftright()
 	-- collide with solid on left
 	if plyr.dx < 0 and
 	mcollide(plyr,"left",solid)
@@ -215,7 +269,7 @@ function move_plyr()
 		plyr.x+=fixl
 	end -- end if plyr.dx<0
 
- 	-- collide with solid on right
+		-- collide with solid on right
 	if plyr.dx > 0 and
 	mcollide(plyr,"right",solid)
 	then
@@ -224,27 +278,7 @@ function move_plyr()
 		-- don't get stuck in wall
 		plyr.x-=fixr
 	end -- end if plyr.dx>0
-
-	-- update x,y pos by dx,dy
-	plyr.x+=plyr.dx
-	plyr.y+=plyr.dy
-
-	-- keep player on screen
-	if plyr.x<0 then 
-		plyr.x=0
-	end -- end if x<0
-
-	-- jumping sprite
-	if plyr.landed == false then 
-		plyr.n=6
-	end -- end if false
-
-	-- default sprite
-	if plyr.landed then 
-		plyr.n=1
-	end -- end if plyr.landed
-
-end -- end move_plyr()
+end -- end function check_leftright
 -->8
 -- map collision function
 function mcollide(obj,dir,flag)
@@ -320,7 +354,10 @@ end -- end mcollide()
 -- camera function
 function move_cam()
 
-	-- center camera on player
+	-- center camera on player:
+	-- subtract half the screen
+	-- width (128/2=64), then
+	-- add half the player's width
 	camx=plyr.x-64+plyr.w/2 
 
 	-- constrain to left edge
@@ -328,7 +365,8 @@ function move_cam()
 		camx=map_start
 	end -- end if at map_start
 
-	camera(camx,camy) -- position the camera
+	-- position the camera
+	camera(camx,camy) 
 
 end -- end move_cam()
 __gfx__
