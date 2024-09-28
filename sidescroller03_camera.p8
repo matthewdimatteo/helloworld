@@ -25,7 +25,9 @@ function _init()
 	camx=0
 	camy=0
 
-	-- map: 128 px / screen (16 tiles x 8 px per tile) x 8 screens = 1024 px
+	-- map: 128 px / screen 
+	-- 16 tiles x 8 px per tile
+	-- x 8 screens = 1024 px
 	map_start=0
 	
 	-- map tile flags
