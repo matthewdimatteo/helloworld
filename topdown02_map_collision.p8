@@ -5,11 +5,17 @@ __lua__
 -- example 02: map collision
 -- by matthew dimatteo
 
+-- tab 0: game loop
+-- tab 1: make player
+-- tab 2: move player (collision)
+-- tab 3: animate player
+-- tab 4: swap sprite
+
 -- runs once at start
 function _init()
 
 	big=false -- type of sprite
-	make_plyr() -- initialize
+	make_plyr() -- tab 1
 	
 	-- map collision variables:
 	-- coordinates of location
@@ -34,19 +40,19 @@ function _init()
 	-- player is trying to move to
 	-- (also just given a default
 	-- value to initialize)
-	hf1=1 -- has flag (point 1)
-	hf2=1 -- has flag (point 2)
+	is_wall1=1 -- has flag (point 1)
+	is_wall2=1 -- has flag (point 2)
 	
 end -- end _init()
 
 -- loops 30x/sec
 function _update()
-	move_plyr() -- tab 1
+	move_plyr() -- tab 2
 	anim_plyr() -- tab 3
 	
 	-- press z to swap sprite
 	if btnp(🅾️) then
-		swap_sprite() -- tab 2
+		swap_sprite() -- tab 4
 	end -- end if btnp(🅾️)
 	
 end -- end _update()
@@ -59,20 +65,19 @@ function _draw()
 	
 	-- print coordinates and direction
 	print(plyr.x..","..(plyr.y),2,2,7)
-	print("facing "..plyr.facing,2,10,7)
- 
+	
 	-- print flag-checking boolean
 	-- values (true if wall)
-	if hf1 == true then
+	if is_wall1 == true then
 		print("collide pt 1",60,2,10)
 	else
 		print("no collide pt 1",60,2,7)
-	end -- end if hf1 == true
-	if hf2 == true then
+	end -- end if is_wall1 == true
+	if is_wall2 == true then
 		print("collide pt 2",60,10,10)
 	else
 		print("no collide pt 2",60,10,7)
-	end -- end if hf2 == true
+	end -- end if is_wall2 == true
 
 	-- draw target coords as dots
 	rect(tx,ty,tx,ty,0) 
@@ -80,8 +85,8 @@ function _draw()
  
  	-- print the sprite number of
  	-- the adjacent map tiles
-	if t1 >0 and t2 > 0 
-	and(hf1 or hf2) 
+	if t1 > 0 and t2 > 0 
+	and(is_wall1 or is_wall2) 
 	then
 		if plyr.facing=="left" then 
 			print(t1,tx-4,ty-2,0) 
@@ -96,11 +101,11 @@ function _draw()
 			print(t1,tx-4,ty+2,0) 
 			print(t2,tx2+3,ty2+2,0) 			
 		end -- end if facing
-	end -- end if t1+t2+hf1/hf2
+	end -- end if t1+t2+is_wall1/is_wall2
  
 end -- end _draw()
 -->8
--- player
+-- make player
 function make_plyr()
 	plyr = {} -- player object
 	
@@ -122,24 +127,33 @@ function make_plyr()
 	plyr.y=24
 	
 	-- direction
-	plyr.facing="down"
 	plyr.flip=false
 	
 	plyr.spd=4 -- speed
-	
 end -- end make_plyr()
-
+-->8
+-- move player
 function move_plyr()
 
 	-- left arrow
 	if btnp(⬅️) then
 	
-	 	-- tx is one tile to
-	 	-- the left of the player
+		-- tx and ty are the target
+		-- x,y of the tile the player
+		-- is trying to move to
+
+		-- we check 2 points
+		-- (tx,ty and tx2, ty2)
+		-- to check opposite sides
+		-- of the player
+
+		-- target is to the left of
+		-- the player
 		tx=plyr.x-1
 		ty=plyr.y
-		plyr.facing="left"
 		
+		-- factor in the height for
+		-- the second point
 		tx2=tx
 		ty2=plyr.y+plyr.h-1
 	
@@ -148,15 +162,13 @@ function move_plyr()
 	-- right arrow
 	if btnp(➡️) then
 	
-	 	-- tx is one player width
-	 	-- to the right of the player
+		-- target is to the right
+		-- of the player
 		tx=plyr.x+plyr.w
 		ty=plyr.y
-		plyr.facing="right"
 		
-		-- we also need to check the
-		-- lower side of the quadrant
-		-- to the right
+		-- factor in the height for
+		-- the second point
 		tx2=tx
 		ty2=plyr.y+plyr.h-1
 	 
@@ -165,12 +177,12 @@ function move_plyr()
 	-- up arrow
 	if btnp(⬆️) then
 	
-	 	-- ty is one tile
-	 	-- above the player
+		-- target is above the player
 		tx=plyr.x
 		ty=plyr.y-1
-		plyr.facing="up"
 		
+		-- factor in the width for the
+		-- second point
 		tx2=plyr.x+plyr.w-1
 		ty2=ty
 	 
@@ -179,17 +191,14 @@ function move_plyr()
 	-- down arrow
 	if btnp(⬇️) then
 	
-	 	-- ty is one player width
-	 	-- below the player
+		-- target is below the player
 		tx=plyr.x
 		ty=plyr.y+plyr.h
-		plyr.facing="down"
 		
-		-- we also need to check the
-		-- right side of the quadrant
-		-- below the player
+		-- factor in the width for the
+		-- second point
 		tx2=plyr.x+plyr.w-1
-  		ty2=ty
+		ty2=ty
   
 	end -- end if btn ⬇️
 	
@@ -200,128 +209,137 @@ function move_plyr()
 	-- from pixels to tiles, and
 	-- use flr to round down
 	t1=mget(flr(tx/8),flr(ty/8))
- 	t2=mget(flr(tx2/8),flr(ty2/8))
+	t2=mget(flr(tx2/8),flr(ty2/8))
 	
 	-- feed sprite number into fget
 	-- to check whether that sprite
 	-- has flag 0 (wall) turned on
-	hf1=fget(t1,0)
-	hf2=fget(t2,0)
+	is_wall1=fget(t1,0)
+	is_wall2=fget(t2,0)
 	
-	-- hf1/hf2 will return false if
+	-- is_wall1/is_wall2 will return false if
 	-- no wall flag is turned on;
 	-- move the player in this case
-	if hf1 == false 
-	and hf2 == false
+	if is_wall1 == false 
+	and is_wall2 == false
 	then
 	
-	 	-- move left
+		-- move left
 		if btnp(⬅️) then
-		 plyr.x-=plyr.spd
+			plyr.x-=plyr.spd
 		end -- end if btnp(⬅️)
 		
 		-- move right
 		if btnp(➡️) then
-		 plyr.x+=plyr.spd
+			plyr.x+=plyr.spd
 		end -- end if btnp(➡️)
 		
 		-- move up
 		if btnp(⬆️) then
-		 plyr.y-=plyr.spd
+			plyr.y-=plyr.spd
 		end -- end if btnp(⬆️)
 		
 		-- move down
 		if btnp(⬇️) then
-		 plyr.y+=plyr.spd
+			plyr.y+=plyr.spd
 		end -- end if btnp(⬇️)
 		
-	end -- end if hf1/hf2 false
+	end -- end if is_wall1/is_wall2 false
 	
 end -- end move_plyr()
+-->8
+-- animate player
+function anim_plyr()
+
+	-- left
+	if plyr.facing=="left" then
+		if big==true then
+			plyr.n=128
+			plyr.flip=true
+		else
+			plyr.n=66
+			plyr.flip=true
+		end -- end if big
+		
+	-- right
+	elseif plyr.facing=="right" then
+		if big==true then
+			plyr.n=128
+			plyr.flip=false
+		else
+			plyr.n=66
+			plyr.flip=false
+		end -- end if big
+ 	
+	-- up
+	elseif plyr.facing=="up" then
+		if big==true then
+			plyr.n=132
+			plyr.flip=false
+		else
+			plyr.n=65
+			plyr.flip=false
+		end -- end if big
+ 	
+	-- down
+	elseif plyr.facing=="down" then
+		if big==true then
+			plyr.n=70
+			plyr.flip=false
+		else
+			plyr.n=64
+			plyr.flip=false
+		end -- end if big
+	end -- end if facing
+	
+end -- end anim_plyr()
 -->8
 -- swap sprite
 function swap_sprite()
 
- -- switch from big to small
- -- and vice-versa
- if big == true then
-	 big = false
+	-- switch from big to small
+	-- and vice-versa
+	if big == true then
+		big = false
 	elseif big == false then
-	 big = true
- end -- end if big
- 
- -- re-initialize the player
- make_plyr()
- 
- -- update map collision vars
- tx=plyr.x
- ty=plyr.y
- tx2=tx
- ty2=ty
- 
-end -- end function swap_sprite
--->8
--- animate player
-function anim_plyr()
- if plyr.facing=="left" then
-  if big==true then
-   plyr.n=128
-   plyr.flip=true
-  else
-   plyr.n=66
-   plyr.flip=true
-  end -- end if big
- elseif plyr.facing=="right" then
- 	if big==true then
-  	plyr.n=128
-   plyr.flip=false
-  else
-  	plyr.n=66
-   plyr.flip=false
-  end -- end if big
- elseif plyr.facing=="up" then
- 	if big==true then
-  	plyr.n=132
-   plyr.flip=false
-  else
-   plyr.n=65
-   plyr.flip=false
-  end -- end if big
- elseif plyr.facing=="down" then
- 	if big==true then
-   plyr.n=70
-   plyr.flip=false
-  else
-   plyr.n=64
-   plyr.flip=false
-  end -- end if big
- end -- end if facing
-end -- end anim_plyr()
+		big = true
+	end -- end if big
+	
+	-- re-initialize the player
+	make_plyr()
+	
+	-- update map collision vars
+	tx=plyr.x
+	ty=plyr.y
+	tx2=tx
+	ty2=ty
+	
+   end -- end function swap_sprite
 __gfx__
-00000000bbbbbbbb33333333bb5555bbbbb33bbbbbb33bbb000000000000000000000000bbbbbbbbbbbbbbbbbbbbbbbb00000000000000000000000000000000
-00000000bbbbbbbb33333333b555555bbb3333bbbb3333bb000000000000000000000000bbbbbbbbbbbbbbbbbbbbbbbb00000000000000000000000000000000
-00700700bbbbbbbb3be3333355555555b338333bb333333b000000000000000000000000bbbbbbb5555555555bbbbbbb00000000000000000000000000000000
-00077000bbbbbbbb33b33333555555553333383333333333000000000000000000000000bbbbbb555555555555bbbbbb00000000000000000000000000000000
-00077000bbbbbbbb333333eb55555555b383333bb333333b000000000000000000000000bbbbb55555555555555bbbbb00000000000000000000000000000000
-00700700bbbbbbbb333b33b355555555bb3333bbbb3333bb000000000000000000000000bbbb5555555555555555bbbb00000000000000000000000000000000
-00000000bbbbbbbb33eb3333b005500bbbb44bbbbbb44bbb000000000000000000000000bbb555555555555555555bbb00000000000000000000000000000000
-00000000bbbbbbbb33333333bb0000bbbbb44bbbbbb44bbb000000000000000000000000bb55555555555555555555bb00000000000000000000000000000000
-000000001111111111111111115555111111111111111111111111111111111100000000bb55555555555555555555bb00000000000000000000000000000000
-000000001111111111111111155555511111111111111111111111111111111100000000bb55555555555555555555bb00000000000000000000000000000000
-000000001111111111cc1111555555551111ccc111c1c1c111bbbb111111111100000000bb55555555555555555555bb00000000000000000000000000000000
-000000001111111111111111555555551ccc11111c1c1c1111beeb111111111100000000bb55555555555555555555bb00000000000000000000000000000000
-00000000111111111111111155555555111111111111111111beeb111111111100000000bb55555555555555555555bb00000000000000000000000000000000
-00000000111111111cc1cc11555555551111ccc111c1c1c111bbbb111111111100000000bb55555555555555555555bb00000000000000000000000000000000
-000000001111111111111111155555511ccc11111c1c1c11111111111111111100000000bb55555555555555555555bb00000000000000000000000000000000
-000000001111111111111111115555111111111111111111111111111111111100000000bb55555555555555555555bb00000000000000000000000000000000
-000000006666666666666666656656650000000000000000000000000000000033333333bb55555555555555555555bb00000000000000000000000000000000
-000000006666666666666666555555550000000000000000000000000000000033333333bbb555555555555555555bbb00000000000000000000000000000000
-000000006666666666566666665666560000000000000000000000000000000099933333bbbb5555555555555555bbbb00000000000000000000000000000000
-00000000666666666666656655555555000000000000000000000000000000009a999999bbbbb55555555555555bbbbb00000000000000000000000000000000
-0000000066666666666666665666566600000000000000000000000000000000939aa9a9bbbbbb055555555550bbbbbb00000000000000000000000000000000
-000000006666666666666666555555550000000000000000000000000000000099933a3abbbbbbb0000000000bbbbbbb00000000000000000000000000000000
-0000000066666666666656666656656600000000000000000000000000000000aaa33333bbbbbbbbbbbbbbbbbbbbbbbb00000000000000000000000000000000
-000000006666666666666666555555550000000000000000000000000000000033333333bbbbbbbbbbbbbbbbbbbbbbbb00000000000000000000000000000000
+00000000bbbbbbbb33333333bb5555bbbbb33bbbbbb33bbb0000000000000000000000007b7b7b7b7b7b7b7b7b7b7b7b00000000000000000000000000000000
+00000000bbbbbbbb33333333b555555bbb3333bbbb3333bb000000000000000000000000bbbbbbbbbbbbbbbbbbbbbbb700000000000000000000000000000000
+00700700bbbbbbbb3be3333355555555b338333bb333333b0000000000000000000000007bbbbbb5555555555bbbbbbb00000000000000000000000000000000
+00077000bbbbbbbb33b33333555555553333383333333333000000000000000000000000bbbbbb555555555555bbbbb700000000000000000000000000000000
+00077000bbbbbbbb333333eb55555555b383333bb333333b0000000000000000000000007bbbb55555555555555bbbbb00000000000000000000000000000000
+00700700bbbbbbbb333b33b355555555bb3333bbbb3333bb000000000000000000000000bbbb5555555555555555bbb700000000000000000000000000000000
+00000000bbbbbbbb33eb3333b005500bbbb44bbbbbb44bbb0000000000000000000000007bb555555555555555555bbb00000000000000000000000000000000
+00000000bbbbbbbb33333333bb0000bbbbb44bbbbbb44bbb000000000000000000000000bb55555555555555555555b700000000000000000000000000000000
+0000000011111111111111111155551111111111111111111111111111111111000000007b55555555555555555555bb00000000000000000000000000000000
+000000001111111111111111155555511111111111111111111111111111111100000000bb55555555555555555555b700000000000000000000000000000000
+000000001111111111cc1111555555551111ccc111c1c1c111bbbb1111111111000000007b55555555555555555555bb00000000000000000000000000000000
+000000001111111111111111555555551ccc11111c1c1c1111beeb111111111100000000bb55555555555555555555b700000000000000000000000000000000
+00000000111111111111111155555555111111111111111111beeb1111111111000000007b55555555555555555555bb00000000000000000000000000000000
+00000000111111111cc1cc11555555551111ccc111c1c1c111bbbb111111111100000000bb55555555555555555555b700000000000000000000000000000000
+000000001111111111111111155555511ccc11111c1c1c111111111111111111000000007b55555555555555555555bb00000000000000000000000000000000
+000000001111111111111111115555111111111111111111111111111111111100000000bb55555555555555555555b700000000000000000000000000000000
+0000000066666666666666666566566500000000000000000000000000000000333333337b55555555555555555555bb00000000000000000000000000000000
+000000006666666666666666555555550000000000000000000000000000000033333333bbb555555555555555555bb700000000000000000000000000000000
+0000000066666666665666666656665600000000000000000000000000000000999333337bbb5555555555555555bbbb00000000000000000000000000000000
+00000000666666666666656655555555000000000000000000000000000000009a999999bbbbb55555555555555bbbb700000000000000000000000000000000
+0000000066666666666666665666566600000000000000000000000000000000939aa9a97bbbbb055555555550bbbbbb00000000000000000000000000000000
+000000006666666666666666555555550000000000000000000000000000000099933a3abbbbbbb0000000000bbbbbb700000000000000000000000000000000
+0000000066666666666656666656656600000000000000000000000000000000aaa333337bbbbbbbbbbbbbbbbbbbbbbb00000000000000000000000000000000
+000000006666666666666666555555550000000000000000000000000000000033333333b7b7b7b7b7b7b7b7b7b7b7b700000000000000000000000000000000
 00000000999999999999999999444499333333544444444445333333000000000000000000000000000000000000000000000000000000000000000000000000
 00000000999999999999999994444449333335444544445444533333000000000000000000000000000000000000000000000000000000000000000000000000
 000000009999999999a9999944444444333354444444444444453333000000000000000000000000000000000000000000000000000000000000000000000000
