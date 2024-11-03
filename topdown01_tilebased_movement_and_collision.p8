@@ -20,23 +20,12 @@ function _init()
 	tx = plyr.x
 	ty = plyr.y
 	
-	-- target object coordinates
-	-- (what the player is trying
-	-- to collect)
-	objx = tx
-	objy = ty
-	
 	-- show target box
 	show=true
 	text="🅾️ = hide target box"
 	
 	-- sprite flags
 	wall = 0 
-	berry= 1
-	gold = 2
-	
-	-- inventory
-	berries=0
  
 end -- end function _init()
 
@@ -49,12 +38,10 @@ function _draw()
 	cls()
 	map()
 	spr(plyr.n,plyr.x*8,plyr.y*8,plyr.w,plyr.h,plyr.flip)
-	print("berries: "..berries,43,2,7)
 	
 	-- draw target box
 	if show == true then
 		rect(tx*8,ty*8,8+tx*8,8+ty*8,7)
-		rect(objx*8,objy*8,8+objx*8,8+objy*8,14)
 	end -- end if show == true
 	
 	-- instructions
@@ -136,50 +123,6 @@ function move_plyr()
 		plyr.x=tx
 		plyr.y=ty
 	end -- end if is_wall == false
-
-	-- collection
-	
-	-- coordinates of object tile
-	objx=tx
-	objy=ty
-	
-	-- set objx,objy based on
-	-- direction; must be 1 tile
-	-- farther in that direction
-	-- than player's position
-	if plyr.dir=="left" then
-		objx=plyr.x-1
-		objy=plyr.y	
-	elseif plyr.dir=="right" then
-		objx=plyr.x+1
-		obj=plyr.y
-	elseif plyr.dir=="up" then
-		objx=plyr.x
-		objy=plyr.y-1
-	elseif plyr.dir=="down" then
-		objx=plyr.x
-		objy=plyr.y+1
-	end -- end if/elseif dir
-
-	-- sprite number of object tile
-	objn=mget(objx,objy)
-	
-	-- true/false is flag on
-	-- for that sprite
-	is_berry= fget(objn,berry)
-	is_gold = fget(objn,gold)
-	
-	if btnp(❎) then
-		if is_berry == true then
-			sfx(1)
-			mset(objx,objy,5)
-			berries += 1
-		elseif is_gold == true then
-			sfx(2)
-			mset(objx,objy,5)
-			berries += 5
-		end -- end if/else berry/gold
-	end -- end if btnp(❎)
  
 end -- end move_plyr()
 -->8
