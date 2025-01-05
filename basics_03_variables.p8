@@ -15,7 +15,7 @@ end
 
 -- loops 30x/sec
 function _update()
-	y = y-2 -- change y position
+	y = y+2 -- change y position
 end
 
 -- loops 30x/sec
