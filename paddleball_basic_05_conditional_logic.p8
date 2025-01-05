@@ -1,0 +1,73 @@
+pico-8 cartridge // http://www.pico-8.com
+version 42
+__lua__
+-- paddleball
+-- lesson 05: conditional logic
+-- by matthew dimatteo
+
+-- runs once at start
+function _init()
+
+	-- declare variables for paddle
+	padn = 1 -- sprite number
+	padx = 60 -- x coordinate
+	pady = 118 -- y coordinate
+	padspd = 3 -- speed
+	
+	-- declare variables for ball
+	baln = 2 -- sprite number
+	balx = 60 -- x coordinate
+	baly = 2 -- y coordinate
+	balspd = 3 -- speed	
+
+end -- end function _init()
+
+-- loops 30 times per second
+function _update()
+
+	-- move ball lower on screen
+	baly = baly + balspd
+	
+	-- left arrow moves pad left
+	-- type shift l for ⬅️
+	if btn(⬅️) then
+		padx = padx - padspd
+	end
+
+	-- right arrow moves pad right
+	-- type shift r for ➡️
+	if btn(➡️) then
+		padx = padx + padspd
+	end
+	
+	-- keep pad on screen left
+	if padx < 0 then
+		padx = 0
+	end
+	
+	-- keep pad on screen right
+	if padx > 120 then
+		padx = 120
+	end
+	
+end -- end function _update()
+
+-- loops 30 times per second
+function _draw()
+	cls() -- clears the screen
+	
+	-- draw paddle sprite
+	spr(padn,padx,pady)
+	
+	-- draw ball sprite
+	spr(baln,balx,baly)
+end
+__gfx__
+000000000000000000cccc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000cccccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0070070000000000cccccccc00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0007700000000000cccccccc00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0007700000000000cccccccc00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0070070000000000cccccccc00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000777777770cccccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000007777777700cccc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
