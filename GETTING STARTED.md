@@ -1,0 +1,10 @@
+# helloworld
+Files in this library are organized by topic. There are different series focusing on particular game formats, such as top-down and side-scrolling perspectives. Each complete series is available as a .zip file; you can also browse for specific topics and download the individual PICO-8 files (.p8 format).
+
+If you're new to programming, I recommend starting with either the "basics" or "paddleball_basic" series. The "paddleball_basic" series assumes you're making your first game and walks you through the process step by step. The "paddleball_physics" series is similar, but uses a concept called "delta time" to produce more realistic movement. If you're a beginner but are up to a challenge, the "paddleball_physics" series is essentially like Level 1 on Hard Mode.
+
+The "topdown_adventure" series is a good project to take on after the paddleball project, or for intermediate learners. The first several examples use tile-based movement, which is good for newer learners and works well for games about collection and exploration but is less useful for games involving real-time action and quick reflexes. The final two examples in the series handle pixel-based movement, which is more granular and works better for games requiring real-time action and fluid movement.
+
+The "platformer" series is slightly more complex than the "topdown_adventure" one; however, if you've explored the "paddleball_physics" series or are already familiar with concepts such as "delta time" and collision detection, you should be equipped to tackle it. The first ten examples go step by step toward implementing the essential movement and collision, and the examples after that go more subject-by-subject and include topics such as camera behavior, respawning the player, animating a sprite, switching between levels, and introducing more nuanced physics.
+
+The "misc_features" series features a la carte examples on topics that are general enough to fit into a variety of game formats. This collection will likely grow over time. Concepts range from intermediate to somewhat advanced, so make sure you understand the essentials first before exploring these features.
