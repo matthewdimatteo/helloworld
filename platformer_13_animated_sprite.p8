@@ -238,12 +238,9 @@ function animate()
 	-- change sprite for jumping
 	if plyr.landed == false then
 		plyr.n = 6 -- jumping sprite
-	else
-		plyr.n = 1 -- default sprite
-	end -- end if plyr.landed false
-
+	
 	-- run cycle when moving l/r
-	if btn(⬅️) or btn(➡️) then
+	elseif btn(⬅️) or btn(➡️) then
 	
 		-- change sprite every
 		-- 0.15 seconds
@@ -259,7 +256,11 @@ function animate()
 			end -- end if plyr.n
 			
 		end -- end if time
-		
+
+	-- default sprite if not
+	-- jumping or running
+	else
+		plyr.n = 1
 	end -- end if btn(⬅️/➡️) 
 
 end -- end function animate()
