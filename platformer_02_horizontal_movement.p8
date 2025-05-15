@@ -32,6 +32,7 @@ function make_plyr()
 	plyr.x=7*8 -- x=56 pixels
 	plyr.y=11*8 -- y=88 pixels
 	
+	-- base speed
 	plyr.xspd=4 -- x speed
 end -- end function make_plyr()
 -->8

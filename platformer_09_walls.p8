@@ -40,9 +40,11 @@ function make_plyr()
 	plyr.w=8
 	plyr.h=8
 	
+	-- base speed
 	plyr.xspd=0.5 -- x speed
 	plyr.yspd=4 -- y speed
 	
+	-- active speed
 	plyr.dx=0 -- change in x
 	plyr.dy=0 -- change in y
 	
@@ -80,27 +82,45 @@ function move_plyr()
 		end -- end if plyr.landed
 	end -- end if btnp(⬆️/❎)
 	
-	-- stop falling when a solid
-	-- tile is below the player
-	if mcollide(plyr,"down",0)
-	and plyr.dy > 0 then
-		plyr.dy = 0	
-		plyr.landed=true
-	end -- end if mcollide down
+	-- test collision below
+	if plyr.dy > 0 then
 	
-	-- prevent movement through
-	-- walls to the left
-	if mcollide(plyr,"left",0)
-	and plyr.dx < 0 then
-		plyr.dx = 0
-	end -- end if mcollide left
+		-- stop falling when a solid
+		-- tile is below the player
+		if mcollide(plyr,"down",0)
+	 	then
+			plyr.dy = 0	
+			plyr.landed=true
+		end -- end if mcollide down
 	
-	-- prevent movement through
-	-- walls to the right
-	if mcollide(plyr,"right",0)
-	and plyr.dx > 0 then
-		plyr.dx = 0
-	end -- end if mcollide right
+	-- test collision above
+	elseif plyr.dy < 0 then
+		if mcollide(plyr,"up",0) then
+			
+		end -- end if mcollide up
+	end -- end if plyr.dy </> 0
+	
+	-- test collision on left
+	if plyr.dx < 0 then
+	
+		-- prevent movement through
+		-- walls to the left
+		if mcollide(plyr,"left",0)
+		then
+			plyr.dx = 0
+		end -- end if mcollide left
+	
+	-- test collision on right
+	elseif plyr.dx > 0 then
+	
+		-- prevent movement through
+		-- walls to the right
+		if mcollide(plyr,"right",0)
+		then
+			plyr.dx = 0
+		end -- end if mcollide right
+	
+	end -- end if plyr.dx </> 0
 	
 	-- update x,y by the calculated
 	-- change (delta x, delta y)
@@ -112,72 +132,89 @@ end -- end function move_plyr()
 -- map collision function
 function mcollide(obj,dir,flag)
 
-	-- this function checks two
-	-- points on the tile adjacent
-	-- to the player: hx1,hy1 and
-	-- hx2,hy2 -- we can then use
-	-- these coordinates to look up
-	-- the adjacent tile's sprite
-	-- number and whether it has
+	-- this function calculates
+	-- the location of the tile
+	-- adjacent to the player in
+	-- a given direction and
+	-- determines whether the
+	-- sprite for that tile has
 	-- a flag turned on
 	
 	-- position of tile to left
-	if dir=="left" then 
-		hx1=obj.x-1
-		hy1=obj.y
+	if dir == "left" then 
+		x1 = obj.x-1
+		y1 = obj.y
 
-		hx2=hx1
-		hy2=obj.y+obj.h-1
+		x2 = x1
+		y2 = obj.y+obj.h-1
 		
 	-- position of tile to right
-	elseif dir=="right" then 
-		hx1=obj.x+obj.w
-		hy1=obj.y
+	elseif dir == "right" then 
+		x1 = obj.x+obj.w
+		y1 = obj.y
 
-		hx2=hx1 
-		hy2=obj.y+obj.h-1
+		x2 = x1 
+		y2 = obj.y+obj.h-1
 	
 	-- position of tile above
-	elseif dir=="up" then 
-		hx1=obj.x
-		hy1=obj.y-1
+	elseif dir == "up" then 
+		x1 = obj.x
+		y1 = obj.y-1
 
-		hx2=obj.x+obj.w-1 
-		hy2=hy1 
+		x2 = obj.x+obj.w-1 
+		y2 = y1 
 		
 	-- position of tile below
-	elseif dir=="down" then 
-		hx1=obj.x
-		hy1=obj.y+obj.h
+	elseif dir == "down" then 
+		x1 = obj.x
+		y1 = obj.y+obj.h
 
-		hx2=obj.x+obj.w-1
-		hy2=hy1
+		x2 = obj.x+obj.w-1
+		y2 = y1
 	end -- end if/elseif
+	
+	-- pass coordinates to
+	-- hitbox coordinates
+	x1r = x1
+	y1r = y1
+	x2r = x2
+	y2r = y2
 
 	-- get sprite number of
 	-- adjacent tile (divide by 8
 	-- to convert from pixel
-	-- coordinate to tile coordinate)
-	hsp1=mget(flr(hx1/8),flr(hy1/8)) 
-	hsp2=mget(flr(hx2/8),flr(hy2/8)) 
+	-- coords to tile coords)
+	s1 = mget(flr(x1/8),flr(y1/8)) 
+	s2 = mget(flr(x1/8),flr(y2/8))
+	s3 = mget(flr(x2/8),flr(y1/8))		
+	s4 = mget(flr(x2/8),flr(y2/8)) 
 
-	-- check flag on sprite for 
-	-- adjacent tile
-	local has_flag1=fget(hsp1,flag) 
-	local has_flag2=fget(hsp2,flag) 
+	-- check flag on sprite at
+	-- the adjacent points
+	has_flag1=fget(s1,flag) 
+	has_flag2=fget(s2,flag) 
+	has_flag3=fget(s3,flag)
+	has_flag4=fget(s4,flag)
 
-	if has_flag1 or has_flag2 then
+	-- if any of those points
+	-- represent a tile with
+	-- the sprite flag on, there
+	-- is collision with that tile
+	if has_flag1 or has_flag2 
+	or has_flag3 or has_flag4
+	then
 		return true
 	else
 		return false
 	end -- end if/else
 
+	-- use this function in
+	-- move_plyr() -- for example:
+	-- if mcollide(plyr,"down",0)
+	-- checks for flag 0 below the
+	-- player
+	
 end -- end mcollide()
--- use this function in
--- move_plyr() -- for example:
--- if mcollide(plyr,"down",0)
--- checks for flag 0 below the
--- player
 __gfx__
 00000000006666000000000000000000000000000000000000000000009499000000000000000000000000000000000000000000000000000000000000000000
 0000000006aaaa600000000000000000000000000000000000008800094999900750057000000000000000000000000000000000000000000000000000000000
