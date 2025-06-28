@@ -2,272 +2,287 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 -- misc series
--- example 03a: multilevel state machine
+-- example 03a: state machine
+-- with multiple levels
 -- by matthew dimatteo
 
+-- tab 0: game loop
+-- tab 1: start screen functions
+-- tab 2: level 1 functions
+-- tab 3: level 2 functions
+-- tab 4: level 3 functions
+-- tab 5: end screen functions
+-- tab 6: player move function
+
 function _init()
-    init_menu() -- set state to 0
-end -- end _init()
+	init_start() -- set state to 0
+end -- /function _init()
 
 function _update()
 
-    -- run the update function for whichever state it is
-    if state == 0 then
-        update_menu()
-    elseif state == 1 then
-        update_level1()
-    elseif state == 2 then
-        update_level2()
-    elseif state == 3 then
-        update_level3()
-    elseif state == 4 then
-        update_gameover()
-    end -- end if state
+	-- run the update function for
+	-- whichever state it is
+	if state == 0 then
+		update_start()
+	elseif state == 1 then
+		update_level1()
+	elseif state == 2 then
+		update_level2()
+	elseif state == 3 then
+		update_level3()
+	elseif state == 4 then
+		update_end()
+	end -- /if/elseif state
 
 end -- end _update()
 
 function _draw()
-    -- run the draw function for whichever state it is
-    if state == 0 then
-        draw_menu()
-    elseif state == 1 then
-        draw_level1()
-    elseif state == 2 then
-        draw_level2()
-    elseif state == 3 then
-        draw_level3()
-    elseif state == 4 then
-        draw_gameover()
-    end -- end if state
+	
+	-- run the corresponding 
+	-- draw function for whichever
+	-- state it is
+	if state == 0 then
+		draw_start()
+	elseif state == 1 then
+		draw_level1()
+	elseif state == 2 then
+		draw_level2()
+	elseif state == 3 then
+		draw_level3()
+	elseif state == 4 then
+		draw_end()
+	end -- /if/elseif state
 
-end -- end _draw()
+end -- /function _draw()
 -->8
+-- start screen functions
+function init_start()
+	state = 0
+	score = 0
+end --/function init_menu()
 
--- menu
-function init_menu()
-    state = 0
-    score = 0
-end
+function update_start()
 
-function update_menu()
+	-- set state to 1, and position 
+	-- player and camera
+	if btnp(❎) then
+		init_level1()
+	end -- end if btnp(❎)
 
-    -- set state to 1, and set player and camera x,y
-    if btnp(❎) then
-        init_level1()
-    end -- end if btnp(❎)
+end -- /function update_menu()
 
-end -- end update_menu()
-
-function draw_menu()
-    cls() -- clear the previous screen
-    print("press x to start",32,62,10) -- draw start screen
-end -- end draw_menu()
+function draw_start()
+	cls() -- refresh screen
+	print("press x to start",32,62,10) -- draw start screen
+end -- /function draw_menu()
 -->8
-
--- level 1
+-- level 1 functions
 function init_level1()
-    state = 1
-    player = {}
+	state = 1 -- set state
+	plyr = {} -- create plyr table
 
-    -- position player and camera
-    player.x = 2*8
-    player.y = 2*8
-    cam_x = 0
-    cam_y = 0
-end -- end init_level1()
+	-- position player and camera
+	plyr.x = 2*8 -- 16 pixels
+	plyr.y = 2*8 -- 16 pixels
+	camx = 0
+	camy = 0
+end -- /function init_level1()
 
 function update_level1()
 
-    move()  -- arrow keys to move
+	-- call plyr move function
+	move() -- tab 6
 
-    -- press z to go back
-    if btnp(🅾️) then
-        init_menu() -- set state to 0
-    end -- end if btnp(🅾️)
+	-- press z to go back a screen
+	if btnp(🅾️) then
+		init_start() -- set state to 0
+	end -- /if btnp(🅾️)
 
-     -- press x to advance
-    if btnp(❎) then
-        init_level2() -- set state to 2, and set player and camera x,y
-    end -- end if btnp(❎)
+	-- press x to advance a screen
+	if btnp(❎) then
+		-- set state and reposition
+		-- player and camera
+		init_level2() -- tab 3
+	end -- /if btnp(❎)
 
-end -- end update_level1()
+end -- /function update_level1()
 
 function draw_level1()
+	cls() -- refresh screen
+	map() -- draw map
+	camera(camx,camy) --set camera
+	spr(1,plyr.x,plyr.y)--draw plyr
+    
+    -- print step count/score
+	print("steps: "..score,camx+2,camy+120,0)
 
-    cls()  -- clear the previous screen
-
-    -- set the map and camera
-    map()
-    camera(cam_x_cam_y)
-    spr(1,player.x,player.y) -- draw the player
-    print("steps: "..score,cam_x+2,cam_y+120,0) -- print score
-
-    -- print the state and controls
-    print(state,cam_x+2,cam_y+2,0) 
-    print("🅾️=menu, ❎=level 2", cam_x+30,cam_y+2,0)
-
-end -- end draw_level1()
+	-- print the state and controls
+	print(state,camx+2,camy+2,0) 
+	print("🅾️=menu, ❎=level 2", camx+30,camy+2,0)
+end -- /function draw_level1()
 -->8
-
--- level 2
+-- level 2 functions
 function init_level2()
-    state = 2
-    player = {}
+	state = 2 -- set state
+	plyr = {} -- create plyr table
 
-    -- reposition player and camera
-    player.x = 24*8
-    player.y = 12*8
-    cam_x = 16*8
-    cam_y = 0
-end -- end init_level2()
+	-- position player and camera
+	plyr.x = 24*8 -- 192 pixels
+	plyr.y = 12*8 -- 96 pixels
+	camx = 16*8 -- 144 pixels
+	camy = 0
+end -- /function init_level2()
 
 function update_level2()
 
-    move() -- arrow keys to move
+	-- call plyr move function
+	move() -- tab 6
+    
+	-- press z to go back a screen
+	if btnp(🅾️) then
+		-- set state and reposition
+		-- player and camera
+		init_level1()
+	end -- /if btnp(🅾️)
 
-    -- press z to go back
-    if btnp(🅾️) then
-        init_level1() -- set state to 1, and set player and camera x,y
-    end
-
-    -- press x to advance
-    if btnp(❎) then
-        init_level3()
-    end -- end if btnp(❎)
+	-- press x to advance a screen
+	if btnp(❎) then
+		-- set state and reposition
+		-- player and camera
+		init_level3()
+	end -- /if btnp(❎)
 
 end -- end update_level2()
 
 function draw_level2()
+	cls() -- refresh screen
+	map() -- draw map
+	camera(camx,camy) --set camera
+	spr(1,plyr.x,plyr.y)--draw plyr
+    
+    -- print step count/score
+	print("steps: "..score,camx+2,camy+120,0)
 
-    cls() -- clear the previous screen
-
-    -- set the map and camera
-    map()
-    camera(cam_x,cam_y)
-    spr(1,player.x,player.y) -- draw the player
-    print("steps: "..score,cam_x+2,cam_y+120,0) -- print score
-
-    -- print the state and controls
-    print(state,cam_x+2,cam_y+2,0) 
-    print("🅾️=level 1, ❎=level 3", cam_x+20,cam_y+2,0)
-
-end -- end draw_level2()
+	-- print the state and controls
+	print(state,camx+2,camy+2,0) 
+	print("🅾️=level 1, ❎=level 3", camx+20,camy+2,0)
+end -- /function draw_level2()
 -->8
-
--- level 3
+-- level 3 functions
 function init_level3()
-    state = 3
-    player = {}
+	state = 3 -- set state
+	plyr = {} -- create plyr table
 
-    -- reposition player and camera
-    player.x = 46*8
-    player.y = 7*8
-    cam_x = 32*8
-    cam_y = 0
-end -- end init_level3() 
+	-- position player and camera
+	plyr.x = 46*8 -- 368 pixels
+	plyr.y = 7*8 -- 56 pixels
+	camx = 32*8 -- 256 pixels
+	camy = 0
+end -- /function init_level3() 
 
 function update_level3()
 
-    move() -- arrow keys to move
+	-- call plyr move function
+	move() -- tab 6
 
-    -- press z to go back
-    if btnp(🅾️) then
-        init_level2() -- set state to 2, and set player and camera x,y
-    end -- end if btnp(🅾️)
+	-- press z to go back a screen
+	if btnp(🅾️) then
+		-- set state and reposition
+		-- player and camera
+		init_level2()
+	end -- /if btnp(🅾️)
 
-    -- press x to advance
-    if btnp(❎) then
-        init_gameover() -- set state to 4
-    end -- end if btnp(❎)
+	-- press x to advance a screen
+	if btnp(❎) then
+		-- set state and reposition
+		-- player and camera
+		init_end()
+	end -- /if btnp(❎)
 
-end -- end update_level3()
+end -- /function update_level3()
 
 function draw_level3()
+	cls() -- refresh screen
+	map() -- draw map
+	camera(camx,camy) --set camera
+	spr(1,plyr.x,plyr.y)--draw plyr
+    
+	-- print step count/score
+	print("steps: "..score,camx+2,camy+120,0)
 
-    cls()  -- clear the previous screen 
-
-    -- set the map and camera
-    map()
-    camera(cam_x,cam_y)
-    spr(1,player.x,player.y) -- draw the player
-    print("steps: "..score,cam_x+2,cam_y+120,0) -- print score
-
-    -- print the state and controls
-    print(state,cam_x+2,cam_y+2,0) 
-    print("🅾️=back, ❎=quit", cam_x+35,cam_y+2,0)
-
-end -- end draw_level3()
+	-- print the state and controls
+	print(state,camx+2,camy+2,0) 
+	print("🅾️=level 2, ❎=quit", camx+25,camy+2,0)
+end -- /function draw_level3()
 -->8
+-- end screen functions
+function init_end()
+	state = 4
 
--- gameover
-function init_gameover()
-    state = 4
+	-- store and reset the score
+	finalscore = score
+	score = 0
+end -- /function init_end()
 
-    -- store and reset the score
-    finalscore = score
-    score = 0
-end -- end init_gameover()
+function update_end()
 
-function update_gameover()
+	-- press z to return to menu
+	if btnp(🅾️) then 
+		init_start() -- set state to 0
+	end -- end if btnp(🅾️)
 
-    -- press z to return to menu
-    if btnp(🅾️) then 
-        init_menu() -- set state to 0
-    end -- end if btnp(🅾️)
+	-- press x to restart level 1
+	if btnp(❎) then 
+		-- set state and reposition
+		-- player and camera
+		init_level1()
+	end -- end if btnp(❎)
 
-    -- press x to restart level 1
-    if btnp(❎) then 
-        init_level1() -- set state to 1, and set player and camera
-    end -- end if btnp(❎)
+end -- /function update_end()
 
-end -- end update_gameover()
+function draw_end()
+	cls() -- refresh screen
+	camera(0,0) -- reset camera
 
-function draw_gameover()
-    cls() -- clear the previous screen
-    camera(0,0) -- reset the camera
-
-    -- draw game over screen
-    print("game over!",45,40,8)
-    print("steps taken: "..finalscore,35,50,10)
-    print("press x to restart",28,70,7)
+	-- draw end screen
+	print("game over!",45,40,8)
+	print("steps taken: "..finalscore,35,50,10)
+	print("press x to restart",28,70,7)
 	print("z to return to title screen",11,80,7)
-end -- end draw_gameover()
+end -- /function draw_end()
 -->8
-
--- move
+-- player move function
 function move()
 
-    speed = 2
+	speed = 2 -- 2 px per btn press
 
-    -- move left
-    if btnp(⬅️) then
-        player.x -= speed
-        sfx(0)
-        score += 1
-    end -- end if btnp(⬅️)
+	-- move left
+	if btnp(⬅️) then
+		plyr.x -= speed
+		sfx(0)
+		score += 1
+	
+	-- move right
+	elseif btnp(➡️) then
+		plyr.x += speed
+		sfx(0)
+		score += 1
+	end -- /if btnp(➡️)
     
-    -- move right
-    if btnp(➡️) then
-        player.x += speed
-        sfx(0)
-        score += 1
-    end -- end if btnp(➡️)
+	-- move up
+	if btnp(⬆️) then
+		plyr.y -= speed
+		sfx(0)
+		score += 1
+	
+	-- move down
+	elseif btnp(⬇️) then
+		plyr.y += speed
+		sfx(0)
+		score += 1
+	end -- /btnp(⬇️)
     
-    -- move up
-    if btnp(⬆️) then
-        player.y -= speed
-        sfx(0)
-        score += 1
-    end -- end if btnp(⬆️)
-    
-    -- move down
-    if btnp(⬇️) then
-        player.y += speed
-        sfx(0)
-        score += 1
-    end -- end btnp(⬇️)
-    
-end -- end function move()
+end -- /function move()
 __gfx__
 00000000cccccccc66666666eeeeeeee999999991111111100000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000cccccccc66666666eeeeeeee999999991111111100000000000000000000000000000000000000000000000000000000000000000000000000000000

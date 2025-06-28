@@ -5,163 +5,190 @@ __lua__
 -- example 02a: timer delay
 -- by matthew dimatteo
 
+-- tab 0: game loop
+-- tab 1: paddle functions
+-- tab 2: ball and timer
+-- tab 3: collision function
+
+-- runs once at start
 function _init()
- gravity = 0.3
- make_paddle()
- make_ball()
-end
+	gravity = 0.3
+	make_pad() -- tab 1
+	make_bal() -- tab 2
+end -- /function _init()
 
+-- runs 30x/second
 function _update()
- move_paddle()
- move_ball()
-end
+	move_pad() -- tab 1
+	move_bal() -- tab 2
+end -- /function _update()
 
+-- runs 30x/sec
 function _draw()
- cls()
- print("delay: "..ball.delay)
- --print("dx: "..ball.dx,2,2)
- --print("dy: "..ball.dy,2,10)
- spr(paddle.sp,paddle.x,paddle.y)
- spr(ball.sp,ball.x,ball.y)
-end
-
+	cls() -- refresh screen
+	
+	-- print delay timer
+	print("delay: "..bal.delay)
+	
+	-- draw sprites
+	spr(pad.sp,pad.x,pad.y)
+	spr(bal.sp,bal.x,bal.y)
+end -- /function _draw()
 -->8
--- paddle
-function make_paddle()
- paddle = {}
- paddle.sp = 1
- paddle.x = 60
- paddle.y = 118
- paddle.w = 10
- paddle.h = 2
- paddle.speed = 3
-end
+-- paddle functions
 
-function move_paddle()
+-- make paddle object
+function make_pad()
+	pad = {} -- table
+	pad.sp = 1 -- sprite number
  
- -- move left
- if btn(⬅️) then
-  paddle.x -= paddle.speed
- end
+	-- x,y position in pixels
+	pad.x = 60
+	pad.y = 118
  
- -- move right
- if btn(➡️) then
-  paddle.x += paddle.speed
- end
+	-- width/height in pixels
+	pad.w = 10
+	pad.h = 2
  
- -- keep on screen left
- if paddle.x < 0 then
-  paddle.x = 0
- end
+	-- speed in pixels per frame
+	pad.speed = 3
+end -- /function make_pad()
+
+-- move paddle with arrow keys
+function move_pad()
  
- -- keep on screen right
- if paddle.x > 128-paddle.w then
-  paddle.x = 128-paddle.w
- end
+	-- move left
+	if btn(⬅️) then
+		pad.x -= pad.speed
+	end -- /if btn(⬅️)
  
-end
+	-- move right
+	if btn(➡️) then
+		pad.x += pad.speed
+	end -- /if btn(➡️)
+ 
+	-- keep on screen left
+	if pad.x < 0 then
+		pad.x = 0
+	end -- /if pad.x < 0
+ 
+	-- keep on screen right
+	if pad.x > 128-pad.w then
+		pad.x = 128-pad.w
+	end -- /if pad.x > 128-w
+ 
+end -- /function move_pad()
 -->8
--- ball
-function make_ball()
- ball = {}
- ball.sp = 2
- ball.x = 60
- ball.y = 2
- ball.w = 8
- ball.h = 8
- ball.dx = 0
- ball.dy = 0
- ball.maxdy = 8
- 
- -- start delay timer at 0
- ball.delay = 0 
- 
- -- start moving when timer==20
- ball.start = 20
- 
-end
+-- ball and timer functions
 
-function move_ball()
+-- make ball object
+function make_bal()
+	bal = {} -- table
+	bal.sp = 2 -- sprite number
+ 
+	-- x,y position in pixels
+	bal.x = 60
+	bal.y = 2
+	
+	-- width/height in pixels
+	bal.w = 8
+	bal.h = 8
+	
+	-- active x,y speed
+	bal.dx = 0
+	bal.dy = 0
 
- -- timer begins counting
- ball.delay += 1
+	-- maximum speed
+	bal.maxdy = 8
  
- -- start moving when time's up
-	if ball.delay >= ball.start then
- 	ball.dy += gravity
- end
+	-- start delay timer at 0
+	bal.delay = 0 
  
- -- bounce off paddle
- if collide(ball,paddle) then
- 	ball.y = 110
- 	sfx(0)
-  ball.dy *= -1
-  
-  if btn(⬅️) then
-   ball.dx = -paddle.speed
-  end
-  
-  if btn(➡️) then
-   ball.dx = paddle.speed
-  end
-  
- end -- end if collide
+	-- start moving when timer==30
+	-- this will be 1 second
+	bal.start = 30
  
- -- reset after falling
- if ball.y > 128 then
- 	sfx(1)
- 	ball.x = 60
-  ball.y = 2
-  ball.dx = 0
-  ball.dy = 0
-  ball.delay = 0
- end
- 
- -- bounce off ceiling
- if ball.y < 0 then
- 	ball.y = 2
-  sfx(0)
-  ball.dy *= -1
- end
- 
- -- bounce off left/right walls
- if ball.x < 0 
- or ball.x > 128-ball.w
- then
- 	sfx(0)
-  ball.dx *= -1
- end
- 
- -- speed limit
- if ball.dy > ball.maxdy then
-  ball.dy = ball.maxdy
- end
- 
- -- speed limit (moving up)
- if ball.dy < -ball.maxdy then
-  ball.dy = -ball.maxdy
- end
- 
- -- start moving when time's up
- if ball.delay >= ball.start then
- 	ball.x += ball.dx
- 	ball.y += ball.dy
- end
+end -- /function make_bal()
 
-end
+-- move ball
+function move_bal()
+
+	-- timer begins counting
+	bal.delay += 1
+ 
+	-- start moving when time's up
+	if bal.delay >= bal.start
+	then
+		bal.dy += gravity
+	end -- /if delay > start
+ 
+	-- bounce off paddle
+	if collide(bal,pad) then
+		bal.y = 110
+		sfx(0)
+		bal.dy *= -1
+  
+		if btn(⬅️) then
+			bal.dx = -pad.speed
+		end -- /if btn(⬅️)
+  
+		if btn(➡️) then
+			bal.dx = pad.speed
+		end -- /if btn(➡️)
+  
+	end -- /if collide
+ 
+	-- reset after falling
+	if bal.y > 128 then
+		sfx(1)
+		make_bal()
+	end -- /if bal.y > 128
+ 
+	-- bounce off ceiling
+	if bal.y < 0 then
+		bal.y = 2
+		sfx(0)
+		bal.dy *= -1
+	end -- /if bal.y < 2
+ 
+	-- bounce off left/right walls
+	if bal.x < 0 
+	or bal.x > 128-bal.w
+	then
+		sfx(0)
+		bal.dx *= -1
+	end -- /if ball x < 0 / > 128
+ 
+	-- speed limit
+	if bal.dy > bal.maxdy then
+		bal.dy = bal.maxdy
+	end -- /if dy > maxdy
+ 
+	-- speed limit (moving up)
+	if bal.dy < -bal.maxdy then
+		bal.dy = -bal.maxdy
+	end -- /if by < -maxdy
+ 
+	-- start moving when time's up
+	if bal.delay >= bal.start then
+		bal.x += bal.dx
+		bal.y += bal.dy
+	end -- /if delay >= start
+
+end -- /function move_bal()
 -->8
--- collision
+-- collision function
 function collide(a,b)
- if b.x + b.w >= a.x
- and b.x <= a.x + a.w
- and b.y + b.h >= a.y
- and b.y <= a.y + a.h
- then
-  return true
- else
-  return false
- end
-end
+	if b.x + b.w >= a.x
+	and b.x <= a.x + a.w
+	and b.y + b.h >= a.y
+	and b.y <= a.y + a.h
+	then
+		return true
+	else
+		return false
+ end -- /if
+end -- /function collide(a,b)
 __gfx__
 000000000000000000cccc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000cccccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

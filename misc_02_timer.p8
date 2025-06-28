@@ -5,83 +5,85 @@ __lua__
 -- example 02: timer
 -- by matthew dimatteo
 
+-- tab 0: game loop and timer
+-- tab 1: beeps
+
 -- runs once at start
 function _init()
-    last = time()
-    limit = 10 -- 10-second limit
-    time_up = false
-end -- end _init()
+	last = time()
+	limit = 10 -- 10-second limit
+	time_up = false
+end -- /function _init()
 
 -- loops 30x/sec
 function _update()
 
-    -- during countdown
-    if time_up == false then
+	-- during countdown
+	if time_up == false then
     
-        beep() -- beep each second
+		beep() -- beep each second
     
-        if time()-last > limit then
-            time_up = true
-        end -- end if time()-last
+		if time()-last > limit then
+			time_up = true
+		end -- /if time()-last > limit
  	
-    -- after time's up
-    else
+	-- after time's up
+	else
     
-        -- press x to restart
-        if btn(5) then
-            _init()
-        end -- end if btn(5)
+		-- press x to restart
+		if btn(❎) then
+			_init()
+		end -- /if btn(❎)
     
-    end -- end if time_up
+	end -- /if/else time_up
     
-end -- end _update()
+end -- /function _update()
 
 -- loops 30x/sec
 function _draw()
-	cls() -- clear screen
+	cls() -- refresh screen
 	
 	-- timer countdown
 	if time_up == false then
- 	    print("elapsed:   "..time()-last,2,2,7) -- time elapsed
- 	    print("remaining: "..limit-time()+last,2,10,8)  -- time remaining
+		print("elapsed:   "..time()-last,2,2,7) -- time elapsed
+		print("remaining: "..limit-time()+last,2,10,8)  -- time remaining
  
-    -- time's up
-    else
-        print("time's up!",2,2,8)
-        print("press x to restart",2,10,7)
-    end -- end if time_up 
+		-- time's up
+		else
+			print("time's up!",2,2,8)
+			print("press x to restart",2,10,7)
+		end -- /if/else time_up 
 
-end -- end _draw()
+end -- /function _draw()
 -->8
 -- beeps
-
 function beep()
 
-    -- tick down first few seconds
-    if limit-time()+last == 9
-    or limit-time()+last == 8
-    or limit-time()+last == 7
-    then
-        sfx(7)
+	-- tick down first few seconds
+	if limit-time()+last == 9
+	or limit-time()+last == 8
+	or limit-time()+last == 7
+	then
+		sfx(7)
     
-    -- descending notes closer to time limit
-    elseif limit-time()+last == 6 then
-        sfx(0)
-    elseif limit-time()+last == 5 then
-        sfx(1)
-    elseif limit-time()+last == 4 then
-        sfx(2)
-    elseif limit-time()+last == 3 then
-        sfx(3)
-    elseif limit-time()+last == 2 then
-        sfx(4)
-    elseif limit-time()+last == 1 then
-        sfx(5)
-    elseif limit-time()+last == 0 then
-        sfx(6)
-    end -- end if limit-time()+last
+	-- descending notes closer to time limit
+	elseif limit-time()+last == 6 then
+		sfx(0)
+	elseif limit-time()+last == 5 then
+		sfx(1)
+	elseif limit-time()+last == 4 then
+		sfx(2)
+	elseif limit-time()+last == 3 then
+		sfx(3)
+	elseif limit-time()+last == 2 then
+		sfx(4)
+	elseif limit-time()+last == 1 then
+		sfx(5)
+	elseif limit-time()+last == 0 then
+		sfx(6)
+	end -- /if limit-time()+last
 
-end -- end function beep()
+end -- /function beep()
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

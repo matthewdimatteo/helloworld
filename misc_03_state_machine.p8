@@ -5,121 +5,126 @@ __lua__
 -- example 03: state machine
 -- by matthew dimatteo
 
-function _init()
+-- tab 0: game loop
+-- tab 1: start screen functions
+-- tab 2: game functions
+-- tab 3: end screen functions
 
- 	state = "start" -- variable for state: "start" / "game" / "gameover"
- 
-end -- end _init()
+function _init()
+	state = "start"
+end -- /function _init()
 
 function _update()
 
- 	-- run the "clone" update for whichever state it is
+	-- run the corresponding update
+	-- function for current state
 	if state == "start" then
 		update_start()
 	elseif state == "game" then
 		update_game()
-	elseif state == "gameover" then
-	 	update_gameover()
-	end -- end if state
+	elseif state == "end" then
+		update_end()
+	end -- /if/elseif state
 	
-end -- end _update()
+end -- /function _update()
 
 function _draw()
- 	cls() -- clear screen
+	cls() -- refresh screen
  
- 	-- run the "clone" draw for whichever state it is
- 	if state == "start" then
+	-- run the corresponding draw
+	-- function for current state
+	if state == "start" then
 		draw_start()
 	elseif state == "game" then
 		draw_game()
-	elseif state == "gameover" then
-	 	draw_gameover()
-	end -- end if state
+	elseif state == "end" then
+	 	draw_end()
+	end -- /if/elseif state
 	
-end -- end _draw()
+end -- /function _draw()
 -->8
-
--- start screen
+-- start screen functions
 function update_start()
 
 	-- press x to start game
-	if btn(5) then
+	if btn(❎) then
 		state = "game"
 		init_game() -- starts game
-	end -- end if btn(5)
+	end -- /if btn(❎)
  
-end -- end update_start()
+end -- /function update_start()
 
 function draw_start()
-	cls() -- clear screen
+	cls() -- refresh screen
 	print("press x to start",30,60,10)
-end -- end draw_start()
+end -- /function draw_start()
 -->8
-
--- game
+-- game functions
 
 -- declare variables
 function init_game()
- 	health = 100
- 	score = 0
-end -- end init_game()
+	health = 100
+	score = 0
+end -- /function init_game()
 
 function update_game()
 
- 	-- up arrow to score
-	if btn(2) then
-	 	score += 1
-	end -- end if btn(2)
+	-- up arrow to score
+	if btn(⬆️) then
+		score += 1
+	end -- /if btn(⬆️)
 	
 	-- down arrow to damage
- 	if btn(3) then
-  		health -=10
-	end -- end if btn(3)
+	if btn(⬇️) then
+		health -=10
+	end -- /if btn(⬇️)
  
- 	-- game over if health < 0
- 	if health < 0 then
-  		state = "gameover"
-  		init_gameover(score) -- pass the score to the gameover state
- 	end -- end if health < 0
+	-- game over if health < 0
+	if health < 0 then
+		state = "end"
+		
+		-- pass the score to the
+		-- next state
+		init_end(score)
+	end -- /if health < 0
  
-end -- end update_game()
+end -- /function update_game()
 
 function draw_game()
 	print("press down arrow to lose health",2,26,8)
 	print("health: "..health,2,34,8)
 	print("press up arrow to increase score",2,2,10)
 	print("score: "..score,2,8,10)
-end -- end draw_game()
+end -- /function draw_game()
 -->8
+-- end screen functions
+function init_end(score)
+	score = score -- get from game state
+end -- /function init_end()
 
--- game over
-function init_gameover(score)
- 	score = score -- get from game state
-end -- end init_gameover()
-
-function update_gameover()
+function update_end()
 
 	-- press x to restart
-	if btn(5) then
+	if btn(❎) then
 		state = "game"
 		init_game()
-	end -- end if btn(5)
+	end -- /if btn(❎)
  
-	-- press z for title screen
-	if btn(4) then
+	-- press z for start screen
+	if btn(🅾️) then
 		state = "start"
 		update_start()
-	end -- end if btn(4)
+	end -- /if btn(🅾️)
  
-end -- end update_gameover()
+end -- /function update_end()
 
-function draw_gameover()
-	cls() -- clear screen
+function draw_end()
+	cls() -- refresh screen
 	print("game over!",45,40,8)
 	print("your score: "..score,35,50,10)
 	print("press x to restart",28,70,7)
 	print("z to return to title screen",11,80,7)
-end -- end draw_gameover()
+end -- /function draw_end()
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
