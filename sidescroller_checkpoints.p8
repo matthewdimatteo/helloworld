@@ -282,6 +282,9 @@ function cam_follow()
 		camx = 1024-128 
 	end
 	
+	-- plug camx,camy into
+	-- built-in camera function
+	-- to apply new values
 	camera(camx,camy)
 end -- /function cam_follow()
 -->8
