@@ -3,8 +3,44 @@ version 42
 __lua__
 -- rider game academy
 -- top-down adventure
--- step 00: assets only
+-- step 01: map and player
 -- by matthew dimatteo
+
+-- tab 0: game loop
+-- tab 1: *** make player ***
+
+-- runs once at start
+function _init()
+	make_plyr() -- *** tab 1 ***
+end -- /function _init()
+
+-- runs 30x/sec
+-- movement, calculation
+function _update()
+
+end -- /function _update()
+
+-- runs 30x/sec
+-- output/graphics
+function _draw()
+	cls() -- refresh screen
+	map() -- *** draw map ***
+	
+	-- *** draw player sprite ***
+	-- multiply x,y by 8 to
+	-- convert from tiles to pixels
+	spr(plyr.n,plyr.x*8,plyr.y*8)
+end -- /function _draw()
+-->8
+-- *** make player *** --
+function make_plyr()
+	plyr = {} -- table
+	plyr.n = 64 -- sprite number
+	
+	-- x,y tile coordinates
+	plyr.x = 7
+	plyr.y = 6
+end -- /function make_plyr()
 __gfx__
 00000000bbbbbbbbbbbbbbbbbb5555bbbbb33bbbbbb33bbbbbb33bbbbbb33bbbbbbbbbbb55555555555555550000000000000000000000000000000000000000
 00000000bbbbbbbbbbbbbbbbb555555bbb3333bbbb3333bbbb3333bbbb3333bbbbbbbbbb556666555bbbbbb50000000000000000000000000000000000000000

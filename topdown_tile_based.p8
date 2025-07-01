@@ -2,9 +2,148 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 -- rider game academy
--- top-down adventure
--- step 00: assets only
+-- top-down template
+-- tile-based movement
 -- by matthew dimatteo
+
+-- tab 0: game loop
+-- tab 1: make player
+-- tab 2: move player
+
+-- runs once at start
+function _init()
+	make_plyr() -- tab 1
+	
+	-- target tile coords
+	tx=plyr.x
+	ty=plyr.y
+end -- /function _init()
+
+-- runs 30x/sec
+-- movement, calculation
+function _update()
+	move_plyr() -- tab 2
+end -- /function _update()
+
+-- runs 30x/sec
+-- output/graphics
+function _draw()
+	cls() -- refresh screen
+	map() -- draw map
+	
+	-- draw player sprite
+	-- multiply x,y by 8 to
+	-- convert from tiles to pixels
+	-- add values for w,h,flip
+	spr(plyr.n,plyr.x*8,plyr.y*8,plyr.w,plyr.h,plyr.flip)
+	
+	-- draw box where player is
+	-- trying to move to
+	--rect(tx*8,ty*8,8*tx+8,8*ty+8,7)
+end -- /function _draw()
+-->8
+-- make player --
+function make_plyr()
+	plyr = {} -- table
+	plyr.n = 64 -- sprite number
+	
+	-- x,y tile coordinates
+	plyr.x = 7
+	plyr.y = 6
+
+	-- tiles wide, tall
+	-- multiply by 8 to get px
+	plyr.w = 1
+	plyr.h = 1
+
+	-- direction
+	plyr.dir = ⬇️ -- down
+	
+	-- whether to flip sprite
+	plyr.flip= false
+end -- /function make_plyr()
+-->8
+-- move player
+function move_plyr()
+
+	-- instead of just moving,
+	-- first determine if the tile
+	-- the player is trying to move
+	-- to is something they can
+	-- actually go to
+
+	-- left
+	if btnp(⬅️) then
+		-- target 1 tile left of plyr
+		tx = plyr.x - 1
+		ty = plyr.y
+		
+		-- set direction
+		plyr.dir = ⬅️
+		plyr.n = 96
+		plyr.flip = true
+	end -- /if btnp(⬅️)
+	
+	-- right
+	if btnp(➡️) then
+		-- target 1 tile right of plyr
+		tx = plyr.x + 1
+		ty = plyr.y
+		
+		-- set direction
+		plyr.dir = ➡️
+		plyr.n = 96
+		plyr.flip = false
+	end -- /if btnp(➡️)
+	
+	-- up
+	if btnp(⬆️) then
+		-- target 1 tile above plyr
+		tx = plyr.x
+		ty = plyr.y - 1
+		
+		-- set direction
+		plyr.dir = ⬆️
+		plyr.n = 80
+		plyr.flip = false
+	end -- /if btnp(⬆️)
+	
+	-- down
+	if btnp(⬇️) then
+		-- target 1 tile below plyr
+		tx = plyr.x
+		ty = plyr.y + 1
+		
+		-- set direction
+		plyr.dir = ⬇️
+		plyr.n = 64
+		plyr.flip = false
+	end -- /if btnp(⬇️)
+
+	-- sprite number of target tile
+	tn = mget(tx,ty)
+
+	-- sprite flags
+	wall = 0
+ 
+	-- true/false is flag 0 on
+	-- for that sprite
+	is_wall = fget(tn,wall)
+ 
+	-- move to target if no wall
+	if is_wall == false then
+		plyr.x=tx
+		plyr.y=ty
+	
+	-- play bump sound if blocked
+	else
+		if btn(⬅️) or btn(➡️)
+		or btn(⬆️) or btn(⬇️) then
+			sfx(0)
+		end -- /if btn
+	end -- /if is_wall == false
+	
+end -- /function move_plyr()
 __gfx__
 00000000bbbbbbbbbbbbbbbbbb5555bbbbb33bbbbbb33bbbbbb33bbbbbb33bbbbbbbbbbb55555555555555550000000000000000000000000000000000000000
 00000000bbbbbbbbbbbbbbbbb555555bbb3333bbbb3333bbbb3333bbbb3333bbbbbbbbbb556666555bbbbbb50000000000000000000000000000000000000000

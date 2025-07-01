@@ -3,8 +3,96 @@ version 42
 __lua__
 -- rider game academy
 -- top-down adventure
--- step 00: assets only
+-- step 03: collision
 -- by matthew dimatteo
+
+-- tab 0: game loop
+-- tab 1: make player
+-- tab 2: move player
+
+-- runs once at start
+function _init()
+	make_plyr() -- tab 1
+	
+	-- *** target tile coords ***
+	tx=plyr.x
+	ty=plyr.y
+end -- /function _init()
+
+-- runs 30x/sec
+-- movement, calculation
+function _update()
+	move_plyr() -- tab 2
+end -- /function _update()
+
+-- runs 30x/sec
+-- output/graphics
+function _draw()
+	cls() -- refresh screen
+	map() -- draw map
+	
+	-- draw player sprite
+	-- multiply x,y by 8 to
+	-- convert from tiles to pixels
+	spr(plyr.n,plyr.x*8,plyr.y*8)
+	
+	-- *** draw box where player
+	-- is trying to move to ***
+	rect(tx*8,ty*8,8*tx+8,8*ty+8,7)
+end -- /function _draw()
+-->8
+-- make player --
+function make_plyr()
+	plyr = {} -- table
+	plyr.n = 64 -- sprite number
+	
+	-- x,y tile coordinates
+	plyr.x = 7
+	plyr.y = 6
+end -- /function make_plyr()
+-->8
+-- move player
+function move_plyr()
+
+	-- instead of just moving,
+	-- first determine if the tile
+	-- the player is trying to move
+	-- to is something they can
+	-- actually go to
+
+	-- left
+	if btnp(⬅️) then
+		-- *** target is 1 tile 
+		-- to left of plyr ***
+		tx = plyr.x - 1
+		ty = plyr.y
+	end -- /if btnp(⬅️)
+	
+	-- right
+	if btnp(➡️) then
+		-- *** target is 1 tile 
+		-- to right of plyr ***
+		tx = plyr.x + 1
+		ty = plyr.y
+	end -- /if btnp(➡️)
+	
+	-- up
+	if btnp(⬆️) then
+		-- *** target is 1 tile
+		-- above plyr ***
+		tx = plyr.x
+		ty = plyr.y - 1
+	end -- /if btnp(⬆️)
+	
+	-- down
+	if btnp(⬇️) then
+		-- *** target is 1 tile
+		-- below plyr ***
+		tx = plyr.x
+		ty = plyr.y + 1
+	end -- /if btnp(⬇️)
+	
+end -- /function move_plyr()
 __gfx__
 00000000bbbbbbbbbbbbbbbbbb5555bbbbb33bbbbbb33bbbbbb33bbbbbb33bbbbbbbbbbb55555555555555550000000000000000000000000000000000000000
 00000000bbbbbbbbbbbbbbbbb555555bbb3333bbbb3333bbbb3333bbbb3333bbbbbbbbbb556666555bbbbbb50000000000000000000000000000000000000000

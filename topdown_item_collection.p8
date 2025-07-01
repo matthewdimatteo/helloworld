@@ -2,9 +2,225 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 -- rider game academy
--- top-down adventure
--- step 00: assets only
+-- top-down template
+-- tile-based movement
+-- *** item collection ***
 -- by matthew dimatteo
+
+-- tab 0: game loop
+-- tab 1: make player
+-- tab 2: move player
+-- tab 3: *** inspect tile ***
+
+-- runs once at start
+function _init()
+	make_plyr() -- tab 1
+	
+	-- target tile coords
+	tx=plyr.x
+	ty=plyr.y
+	
+	-- *** target object coords ***
+	objx=tx
+	objy=ty
+	
+	-- *** score / collection ***
+	fruits = 0
+end -- /function _init()
+
+-- runs 30x/sec
+-- movement, calculation
+function _update()
+	move_plyr() -- tab 2
+	inspect() -- *** tab 3 ***
+end -- /function _update()
+
+-- runs 30x/sec
+-- output/graphics
+function _draw()
+	cls() -- refresh screen
+	map() -- draw map
+	
+	-- draw player sprite
+	-- multiply x,y by 8 to
+	-- convert from tiles to pixels
+	-- add values for w,h,flip
+	spr(plyr.n,plyr.x*8,plyr.y*8,plyr.w,plyr.h,plyr.flip)
+	
+	-- draw box where player is
+	-- trying to move to
+	rect(tx*8,ty*8,8*tx+8,8*ty+8,7)
+
+	-- draw box on tile player is
+	-- trying to inspect
+	rect(objx*8,objy*8,8*objx+8,8*objy+8,14)
+
+	-- print score/collection
+	print("fruits: "..fruits,12,12,0)
+end -- /function _draw()
+-->8
+-- make player --
+function make_plyr()
+	plyr = {} -- table
+	plyr.n = 64 -- sprite number
+	
+	-- x,y tile coordinates
+	plyr.x = 7
+	plyr.y = 6
+
+	-- tiles wide, tall
+	-- multiply by 8 to get px
+	plyr.w = 1
+	plyr.h = 1
+
+	-- direction
+	plyr.dir = ⬇️ -- down
+	
+	-- whether to flip sprite
+	plyr.flip= false
+end -- /function make_plyr()
+-->8
+-- move player
+function move_plyr()
+
+	-- instead of just moving,
+	-- first determine if the tile
+	-- the player is trying to move
+	-- to is something they can
+	-- actually go to
+
+	-- left
+	if btnp(⬅️) then
+		-- target 1 tile left of plyr
+		tx = plyr.x - 1
+		ty = plyr.y
+		
+		-- set direction
+		plyr.dir = ⬅️
+		plyr.n = 96
+		plyr.flip = true
+	end -- /if btnp(⬅️)
+	
+	-- right
+	if btnp(➡️) then
+		-- target 1 tile right of plyr
+		tx = plyr.x + 1
+		ty = plyr.y
+		
+		-- set direction
+		plyr.dir = ➡️
+		plyr.n = 96
+		plyr.flip = false
+	end -- /if btnp(➡️)
+	
+	-- up
+	if btnp(⬆️) then
+		-- target 1 tile above plyr
+		tx = plyr.x
+		ty = plyr.y - 1
+		
+		-- set direction
+		plyr.dir = ⬆️
+		plyr.n = 80
+		plyr.flip = false
+	end -- /if btnp(⬆️)
+	
+	-- down
+	if btnp(⬇️) then
+		-- target 1 tile below plyr
+		tx = plyr.x
+		ty = plyr.y + 1
+		
+		-- set direction
+		plyr.dir = ⬇️
+		plyr.n = 64
+		plyr.flip = false
+	end -- /if btnp(⬇️)
+
+	-- sprite number of target tile
+	tn = mget(tx,ty)
+	
+	-- sprite flags
+	wall = 0
+ 
+	-- true/false is flag 0 on
+	-- for that sprite
+	is_wall = fget(tn,wall)
+ 
+	-- move to target if no wall
+	if is_wall == false then
+		plyr.x=tx
+		plyr.y=ty
+	-- play bump sound if blocked
+	else
+		if btn(⬅️) or btn(➡️)
+		or btn(⬆️) or btn(⬇️) then
+			sfx(0)
+		end -- /if btn
+	end -- /if is_wall == false
+	
+end -- /function move_plyr()
+-->8
+-- *** item collection ***
+function inspect()
+
+	-- coordinates of object tile
+	objx=tx
+	objy=ty
+	
+	-- set objx,objy based on
+	-- direction; must be 1 tile
+	-- farther in that direction
+	-- than player's position
+	if plyr.dir==⬅️ then
+		objx=plyr.x-1
+		objy=plyr.y	
+	elseif plyr.dir==➡️ then
+		objx=plyr.x+1
+		obj=plyr.y
+	elseif plyr.dir==⬆️ then
+		objx=plyr.x
+		objy=plyr.y-1
+	elseif plyr.dir==⬇️ then
+		objx=plyr.x
+		objy=plyr.y+1
+	end -- /if/elseif dir
+
+	-- sprite number of object tile
+	objn=mget(objx,objy)
+	
+	-- sprite flags
+	fruit1 = 1 -- collect 1 fruit
+	fruit2 = 2 -- collect 2 fruit
+	fruit3 = 3 -- collect 3 fruit
+	
+	-- true/false is flag on
+	-- for that sprite
+	is_fruit1 = fget(objn,fruit1)
+	is_fruit2 = fget(objn,fruit2)
+	is_fruit3 = fget(objn,fruit3)
+	
+	-- press x to collect fruit
+	if btnp(❎) then
+		if is_fruit1 == true then
+			sfx(1) -- play sound
+			-- replace with empty tree
+			mset(objx,objy,4)
+			fruits += 1 -- add to score
+		elseif is_fruit2 == true then
+			sfx(2) -- play sound
+			-- replace with empty tree
+			mset(objx,objy,4)
+			fruits += 2 -- add to score
+		elseif is_fruit3 == true then
+			sfx(3) -- play sound
+			-- replace with empty tree
+			mset(objx,objy,4)
+			fruits += 3 -- ad to score
+		end -- /if is_fruit
+	end -- /if btnp(❎)
+	
+end -- /function inspect()
 __gfx__
 00000000bbbbbbbbbbbbbbbbbb5555bbbbb33bbbbbb33bbbbbb33bbbbbb33bbbbbbbbbbb55555555555555550000000000000000000000000000000000000000
 00000000bbbbbbbbbbbbbbbbb555555bbb3333bbbb3333bbbb3333bbbb3333bbbbbbbbbb556666555bbbbbb50000000000000000000000000000000000000000
