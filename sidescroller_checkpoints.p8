@@ -72,8 +72,8 @@ function make_plyr()
 	plyr.health = 100
 
 	-- player starting coordinates
-	plyr.startx = 6*8 -- 64 pixels
-	plyr.starty = 12*8 -- 92 pixels
+	plyr.startx = 6*8 -- 48 pixels
+	plyr.starty = 12*8 -- 96 pixels
 
 	-- plug in starting coords
 	plyr.x = plyr.startx

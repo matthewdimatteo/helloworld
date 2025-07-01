@@ -3,44 +3,50 @@ version 42
 __lua__
 -- rider game academy
 -- sidescroller template
--- no physics
+-- with physics
 -- by matthew dimatteo
 
 -- tab 0: game loop
--- tab 1: make player function
--- tab 2: move player function
+-- tab 1: make player
+-- tab 2: move player
 -- tab 3: map collision function
 -- tab 4: debug hud
 
 -- runs once at start
 function _init()
 	debug = true -- debug mode
+	
+	-- physics forces
+	fric = 0.85 -- friction
+	grav = 0.3 -- gravity
+
+	-- variables for plyr
 	make_plyr() -- tab 1
 end -- /function _init()
 
 -- runs 30 times per second
 function _update()
 	move_plyr() -- tab 2
-	
+
 	-- press z to toggle debug mode
 	if btnp(🅾️) then
 		if debug == true then
 			debug = false
-		else
+				else
 			debug = true
 		end -- /if debug
 	end -- /if btnp(🅾️)
-	
+
 end -- /function _update()
 
 -- runs 30 times per second
 function _draw()
 	cls() -- refresh screen
 	map() -- draw map
-	
+
 	-- draw player sprite
 	spr(plyr.n,plyr.x,plyr.y,plyr.w/8,plyr.h/8,plyr.flip)
-	
+
 	-- show debug screen
 	if debug then
 		debug_scrn() -- tab 4
@@ -50,116 +56,59 @@ function _draw()
 
 end -- /function _draw()
 -->8
--- make player function
+-- make player
 -- call in _init()
 function make_plyr()
 	plyr = {} -- table
 	
 	plyr.n = 1 -- sprite number
+
+	-- x,y coordinates
 	plyr.x = 3*8 -- 24 pixels
 	plyr.y = 14*8 -- 112 pixels
-	plyr.w = 8 -- width 8 px
-	plyr.h = 8 -- height 8 px
 	
-	-- l/r movement
-	plyr.spd = 2 -- base speed
+	-- width and height in pixels
+	-- needed for map collision
+	plyr.w=8
+	plyr.h=8
+	
+	-- base speed
+	plyr.xspd=0.5 -- x speed
+	plyr.yspd=3 -- y speed
+	
+	-- active speed
+	plyr.dx=0 -- change in x
+	plyr.dy=0 -- change in y
+	
+	-- player state
 	plyr.dir = ➡️ -- direction
-	plyr.flip = false -- flip x
-	
-	-- track if plyr is jumping
-	plyr.jumping = false
-	
+	plyr.flip =false
+
 	-- number of jumps left
 	plyr.basejumps = 2
 	plyr.jumps = plyr.basejumps
-	
-	-- base jump force
-	plyr.jmax = 5.4
-	
-	-- active jump force
-	plyr.j = plyr.jmax
-	
-	-- jump force decay rate
-	plyr.decay = 0.4
-	
-	-- base fall speed
-	plyr.fmax = 1.8 
-	
-	-- active fall speed
-	plyr.fall = fmax
-	
+
 	-- collision hitbox coords
 	rx1=0 ry1=0 rx2=0 ry2=0
+	
 end -- /function make_plyr()
 -->8
 -- move player function
 -- call in _update()
 function move_plyr()
-
-	-- initiate jump
-	if (btnp(⬆️) or btnp(❎))
-	and plyr.jumps > 0
-	then
-		-- set jump state
-	 plyr.jumping = true
-	 
-	 -- use 1 jump
-	 plyr.jumps -= 1
-	 
-	 -- reset jump force
-	 plyr.j = plyr.jmax
-	end -- /if btnp(⬆️/❎)
 	
-	-- apply jump force
-	if plyr.jumping then
+	-- apply friction so the plyr
+	-- eventually stops moving
+	plyr.dx *= fric
 	
-		-- subtract from y position
-		-- to move higher on screen
-		plyr.y -= plyr.j
-		
-		-- reduce jump force over time
-		plyr.j -= plyr.decay
-		
-		-- nullify fall rate while
-		-- jumping to avoid
-		-- compounding with decay
-		plyr.fall = 0
-	end -- /if jumping
-	
-	-- stop falling when landed
-	if mcollide(plyr,⬇️,0) then
-	
-		-- reset player state
-		plyr.jumping = false
-		
-		-- reset jump counter
-		plyr.jumps = plyr.basejumps
-		
-		-- reset jump force for
-		-- next jump
-		plyr.j = plyr.jmax
-		
-		-- correct y position if
-		-- fell into ground
-		plyr.y -= plyr.y%8
-		
-	-- if not touching ground,
-	-- make player fall
-	else
-		-- reset fall rate to base
-		plyr.fall = plyr.fmax
-		
-		-- apply fall rate
-		plyr.y += plyr.fall
-	end -- /if mcollide
+	-- apply gravity so the plyr
+	-- does not float endlessly
+	plyr.dy += grav
 	
 	-- move left
-	-- (if not blocked by a wall)
-	if btn(⬅️) and
-	not mcollide(plyr,⬅️,0)
-	then
-		-- subtract from x position
-		plyr.x -= plyr.spd
+	if btn(⬅️) then
+		-- subtract from change in x
+		plyr.dx -= plyr.xspd
 		
 		-- track player's direction
 		plyr.dir = ⬅️
@@ -169,19 +118,77 @@ function move_plyr()
 	end -- /if btn(⬅️)
 	
 	-- move right
-	-- (if not blocked by a wall)
-	if btn(➡️) and
-	not mcollide(plyr,➡️,0)
-	then
-		-- add to x position
-		plyr.x += plyr.spd
-		
+	if btn(➡️) then
+		-- add to change in x
+		plyr.dx += plyr.xspd
+
 		-- track player's direction
 		plyr.dir = ➡️
 		
 		-- un-flip sprite
 		plyr.flip = false
-	end -- /if btn(➡️)
+	end -- /if btn(⬅️)
+	
+	-- jump
+	if (btnp(⬆️) or btnp(❎))
+	and plyr.jumps > 0
+	then
+		plyr.dy = -plyr.yspd
+		plyr.jumps -= 1
+	end -- /if btnp(⬆️/❎)
+	
+	-- test collision below
+	if plyr.dy > 0 then
+	
+		-- stop falling when a solid
+		-- tile is below the player
+		if mcollide(plyr,⬇️,0)
+			then
+			plyr.dy = 0
+			
+			-- reset jump count
+			plyr.jumps = plyr.basejumps
+
+			-- correct y position if
+			-- fell into ground
+			plyr.y -= plyr.y%8
+		end -- /if mcollide down
+	
+	end -- /if plyr.dy < / > 0
+
+	-- test collision on left
+	if plyr.dx < 0 then
+	
+		-- prevent movement through
+		-- walls to the left
+		if mcollide(plyr,⬅️,0) then
+			plyr.dx = 0
+		
+			-- correct x position to
+			-- avoid getting stuck in wall
+			plyr.x=ceil((plyr.x-1)/8)*8
+		end -- /if mcollide left
+	
+	-- test collision on right
+	elseif plyr.dx > 0 then
+	
+		-- prevent movement through
+		-- walls to the right
+		if mcollide(plyr,➡️,0) then
+			plyr.dx = 0
+		
+			-- correct x position to
+			-- avoid getting stuck in wall
+			plyr.x=flr((plyr.x+1)/8)*8
+			--plyr.x -= plyr.x%8
+		end -- /if mcollide right
+	
+	end -- /if plyr.dx < / > 0
+	
+	-- update x,y by the calculated
+	-- change (delta x, delta y)
+	plyr.x += plyr.dx
+	plyr.y += plyr.dy
 	
 end -- /function move_plyr()
 -->8
@@ -194,7 +201,6 @@ end -- /function move_plyr()
 -- // run code for what happens
 -- // when collision is true
 -- end 
-
 function mcollide(obj,dir,flag)
 	
 	-- determine location of map
@@ -253,12 +259,12 @@ function mcollide(obj,dir,flag)
 	else
 		return false
 	end -- /if f1 or f2 or f3 or f4
-	
-end --/function mcollide()
+
+end -- /mcollide()
 -->8
 -- debug hud
 function debug_scrn()
-
+	
 	-- draw collision hitbox
 	if mcollide(plyr,⬅️,0)
 	or mcollide(plyr,➡️,0)
@@ -292,12 +298,10 @@ function debug_scrn()
 	coords = flr(plyr.x)..","..flr(plyr.y)
 	print(coords,plyr.x-5,plyr.y+10,7)
 	
-	-- print jump data
-	print("jumps left: "..plyr.jumps,12,10,0)
-	print("jump force: "..plyr.j,12,18,0)
-	if plyr.fall then
-		print("fall rate:  "..plyr.fall,12,26,0)
-	end -- /end if plyr.fall > 0
+	-- print movement data
+	print("dx:"..plyr.dx,12,10,0)
+	print("dy:"..plyr.dy,12,18,0)
+	print("jumps left: "..plyr.jumps,12,26,0)
 	
 end -- /function debug_scrn()
 __gfx__

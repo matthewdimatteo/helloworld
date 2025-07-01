@@ -37,8 +37,8 @@ function make_plyr()
 	plyr.n = 1 -- sprite number
 
 	-- x,y coordinates
-	plyr.x = 3*8 -- 64 pixels
-	plyr.y = 14*8 -- 92 pixels
+	plyr.x = 3*8 -- 24 pixels
+	plyr.y = 14*8 -- 112 pixels
 end -- /function make_plyr()
 __gfx__
 0000000000aaaa000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
