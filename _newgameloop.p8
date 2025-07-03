@@ -4,6 +4,7 @@ __lua__
 -- new game template
 
 -- runs once at start
+-- variables, objects
 function _init()
 	
 end -- /function _init()
