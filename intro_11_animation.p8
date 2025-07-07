@@ -65,12 +65,16 @@ end -- /function move_plyr()
 -->8
 -- animate key
 function anim_key()
-
-	-- start timer
-	timer = timer + 1
 	
 	-- rate of animation
 	rate = 9
+
+	-- range of animation
+	anim_start = 2
+	anim_end = 4
+
+	-- start timer
+	timer = timer + 1
 	
 	-- every few frames, swap
 	-- the key's sprite
@@ -81,13 +85,13 @@ function anim_key()
 		
 		-- if key sprite reaches end
 		-- of loop, go back to start
-		if key > 4 then
-			key = 2
-		end -- /if key > 4
+		if key > anim_end then
+			key = anim_start
+		end -- /if key > anim_end
 		
 		-- reset timer
 		timer = 0
-	end -- /if timer >= 15
+	end -- /if timer >= rate
 	
 end -- /function 
 __gfx__

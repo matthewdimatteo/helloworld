@@ -41,6 +41,9 @@ function _draw()
 	else
 		print("keys: 1",2,2,7)
 	end -- /if collected
+
+	-- draw plyr hitbox
+	--rect(x,y,x+8,y+8)
 end -- /function _draw()
 -->8
 -- make player function
@@ -79,11 +82,15 @@ end -- /function move_plyr()
 -- animate key
 function anim_key()
 
-	-- start timer
-	timer = timer + 1
-	
 	-- rate of animation
 	rate = 9
+
+	-- range of animation
+	anim_start = 2
+	anim_end = 4
+
+	-- start timer
+	timer = timer + 1
 	
 	-- every few frames, swap
 	-- the key's sprite
@@ -94,13 +101,13 @@ function anim_key()
 		
 		-- if key sprite reaches end
 		-- of loop, go back to start
-		if key > 4 then
-			key = 2
-		end -- /if key > 4
+		if key > anim_end then
+			key = anim_start
+		end -- /if key > anim_end
 		
 		-- reset timer
 		timer = 0
-	end -- /if timer >= 15
+	end -- /if timer >= rate
 	
 end -- /function 
 -->8
@@ -111,8 +118,8 @@ function collect()
 	-- add key to inventory
 	if x+8 >= keyx 
 	and x <= keyx+8 
-	and y+4 >= keyy
-	and y <= keyy+4
+	and y+8 >= keyy
+	and y <= keyy+8
 	and collected == false
 	then
 	
