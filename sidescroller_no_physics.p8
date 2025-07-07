@@ -86,7 +86,7 @@ function make_plyr()
 	plyr.fmax = 1.8 
 	
 	-- active fall speed
-	plyr.fall = fmax
+	plyr.fall = plyr.fmax
 	
 	-- collision hitbox coords
 	rx1=0 ry1=0 rx2=0 ry2=0

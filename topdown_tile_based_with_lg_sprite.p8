@@ -33,7 +33,7 @@ function _draw()
 	map() -- draw map
 	
 	-- draw player
-	spr(plyr.n,plyr.x*8,plyr.y*8,plyr.sw,plyr.sh,player)
+	spr(plyr.n,plyr.x*8,plyr.y*8,plyr.sw,plyr.sh,plyr.flip)
 	
 	-- draw target coords as dots
 	rect(tx*8,ty*8,tx*8,ty*8,8) 
