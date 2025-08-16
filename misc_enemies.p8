@@ -1,13 +1,15 @@
 pico-8 cartridge // http://www.pico-8.com
-version 42
+version 43
 __lua__
--- projectiles
+-- enemies
 -- by matthew dimatteo
 
 -- tab 0: game loop
 -- tab 1: player
 -- tab 2: shooting
 -- tab 3: lasers
+-- tab 4: enemies
+-- tab 5: object collision
 
 -- runs once at start
 -- variables, objects
@@ -17,43 +19,56 @@ function _init()
 	friction = 0.9
 
 	-- game variables
-	ammo = 10
+	score = 0
+	lives = 3
 
 	-- player variables
 	make_plyr() -- tab 1
 	
-	-- create table for all
-	-- active lasers
+	-- create tables for all
+	-- active sets of objects
 	lasers = {}
+	enemies = {}
 end -- /function _init()
 
 -- runs 30x/sec
 -- movement, calculation
 function _update()
+
 	move_plyr() -- tab 1
 
 	-- press x to shoot
 	if btnp(❎) then
 		shoot() -- tab 2
-	end -- /if btnp(❎)
+	end -- /if btn(❎)
 
 	-- manage lasers, tab 3
 	foreach(lasers,move_laser)
-end -- /function _updatE()
+	
+	-- manage enemies, tab 4
+	spawn_enemies()
+	foreach(enemies,move_enemy)
+	
+end -- /function _update()
 
 -- runs 30x/sec
 -- output/graphics
 function _draw()
 	cls() -- refresh screen
-
+	
 	-- display hud
-	print("ammo: "..ammo,2,2,10)
+	print("lives: "..lives,2,2,8)
+	print("score: "..score,2,10,10)
 	
 	-- draw player
 	spr(plyr.n,plyr.x,plyr.y,1,1,plyr.flpx,plyr.flpy)
 
 	-- draw lasers, tab 3
 	foreach(lasers,draw_laser)
+
+	-- draw enemies, tab 4
+	foreach(enemies,draw_enemy)
+ 
 end -- /function _draw()
 -->8
 -- player
@@ -208,34 +223,20 @@ end -- /function move_plyr()
 -- end
 function shoot()
  	
-	-- only shoot if there's ammo
-	if ammo > 0 then
-  
-		ammo -= 1 -- subtract ammo
-		sfx(0) -- play sound
-  	
-		-- constrain ammo to 0
-		if ammo < 0 then
-			ammo = 0
-		end -- /if plyr.ammo < 0
-  	
-		-- spawn laser based on
-		-- player's direction
-		-- make_laser() on tab 3
-		if plyr.dir == "left" then
-			make_laser(plyr.x-4, plyr.y,plyr.dir)
-		elseif plyr.dir == "right" then
-			make_laser(plyr.x+4, plyr.y,plyr.dir)
-		elseif plyr.dir == "up" then
-			make_laser(plyr.x, plyr.y-4,plyr.dir)
-		elseif plyr.dir == "down" then
-			make_laser(plyr.x, plyr.y+4,plyr.dir)
-		end -- /if-else plyr.dir
-			
-	-- if no ammo, play empty sound
-	else
-		sfx(2)
-	end -- /if-else plyr.ammo > 0
+	sfx(0) -- play sound
+
+	-- spawn laser based on
+	-- player's direction
+	-- make_laser() on tab 3
+	if plyr.dir == "left" then
+		make_laser(plyr.x-4, plyr.y,plyr.dir)
+	elseif plyr.dir == "right" then
+		make_laser(plyr.x+4, plyr.y,plyr.dir)
+	elseif plyr.dir == "up" then
+		make_laser(plyr.x, plyr.y-4,plyr.dir)
+	elseif plyr.dir == "down" then
+		make_laser(plyr.x, plyr.y+4,plyr.dir)
+	end -- /if-elseif dir
 	
 end -- /function shoot()
 -->8
@@ -304,11 +305,25 @@ function move_laser(laser)
 	then
 		laser.dx = 0
 		laser.dy = 4
-	end -- /if-else laser.dir
+	end -- /if-elseif dir
  
 	-- update x,y by dx,dy
 	laser.x += laser.dx
 	laser.y += laser.dy
+	
+	-- detect collision with
+	-- enemies and destroy both
+	-- if they collide
+	for enemy in all(enemies) do
+
+		-- collide() on tab 6
+		if collide(laser,enemy) then
+			del(lasers,laser)
+			del(enemies,enemy)
+			score += 10
+			sfx(3)
+		end -- /if collide
+	end -- /for
  
 	-- delete the laser if
 	-- off-screen
@@ -329,6 +344,123 @@ end -- /function move_laser()
 function draw_laser(laser)
 	spr(3,laser.x,laser.y)
 end -- /function draw_laser()
+-->8
+-- enemies
+function spawn_enemies()
+
+	-- randomize x between 0-120
+	local x = flr(rnd(120))
+	x += 4 -- account for spr w
+	
+	-- start above screen
+	local y = -4
+	
+	-- generate random number and
+	-- only make pickup if = 1
+	-- runs 30x/sec:(1/90) x (30)
+	-- = 1/3 chance per second
+	rng = flr(rnd(90))
+	if rng == 1 then
+		make_enemy(x,y) -- tab 5
+	end -- /if rng == 1
+	
+end -- /function spawn_enemies()
+
+-- make a single enemy at x,y
+function make_enemy(x,y)
+
+	-- table (use local so each
+	-- instance is separate)
+	local enemy = {}
+
+	-- sprite number
+	enemy.n = 17
+
+	-- get x,y coords from function
+	enemy.x = x
+	enemy.y = y
+
+	-- width, height
+	enemy.w = 4
+	enemy.h = 4
+
+	-- active y speed
+	enemy.dy = 1
+	
+	-- add to table
+	add(enemies,enemy)
+end -- /function make_enemy(x,y)
+
+-- move a single enemy
+function move_enemy(enemy)
+
+	-- move down
+	enemy.y += enemy.dy
+  
+	-- delete if off screen
+	if enemy.y > 128 then
+		del(enemies,enemy)
+	end -- /if enemy.y > 128
+ 
+	-- detect collision w/plyr
+	-- loop through all enemies
+	for enemy in all(enemies) do
+	
+		-- collide() on tab 6
+		if collide(enemy,plyr) then
+		
+			-- remove the enemy
+			del(enemies,enemy)
+			
+			-- lose a life
+			lives -= 1
+			sfx(4) -- play death sound
+			make_plyr() -- respawn plyr
+
+		end -- /if collide
+	
+	end -- /for
+ 
+end -- /function move_enemy()
+
+-- draw a single enemy
+
+-- call this function using
+-- foreach in _draw():
+-- foreach(enemies,draw_enemy)
+function draw_enemy(enemy)
+  spr(enemy.n,enemy.x,enemy.y,1,1,false,true)
+end -- /function draw_enemy()
+-->8
+-- collision between objects
+
+-- call this function in
+-- _update() or in an object
+-- movement function, using
+-- a for-loop to check
+-- collision between all
+-- active sets of objects 
+
+-- e.g., lasers and enemies:
+-- for enemy in all(enemies) do
+--  if collide(laser,enemy) then
+---  del(lasers,laser)
+--   del(enemies,enemy)
+--  end
+-- end
+function collide(a,b)
+
+	if b.x+b.w >= a.x
+	and b.x <= a.x+a.w
+	and b.y+b.h >= a.y
+	and b.y <= a.y+a.h
+	then
+		return true
+	else
+		return false
+	end -- /if-else
+ 
+end -- /function collide(a,b)
 __gfx__
 00000000000cc000000000cc00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000cc0000000cccc00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -340,10 +472,10 @@ __gfx__
 00000000cccccccc000000cc00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000880000000008800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000880000000888800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00000000008888000088888800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00000000008888008888888800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00000000088888808888888800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-00000000088888800088888800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000008888000088888800077000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000008888008888888800777700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000088888808888888800777700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000088888800088888800077000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000888888880000888800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000888888880000008800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000990000000009900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -356,5 +488,7 @@ __gfx__
 00000000999999990000009900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __sfx__
 00010000292502c2502f2503125000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000200002a7502c7502f750317502c700307003370000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000500000f05000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000f000026750297502e7500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000002075020750000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+001000002465021650000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00100000240502405020050200501a0501a0500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
