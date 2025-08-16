@@ -5,34 +5,37 @@ __lua__
 -- lesson 02: variables
 -- by matthew dimatteo
 
--- runs once at start
+-- *** runs once at start
+-- variables, objects
 function _init()
 
 	-- declare a variable called y
 	-- and give it a value of 2
 	y = 2
 	
-end
+end -- /function _init()
 
--- loops 30 times per second
+-- *** runs 30x/sec
+-- movement, calculation
 function _update()
 
 	-- increase y by 1 each frame
 	y = y + 1
 	
-end
+end -- /function _update()
 
--- loops 30 times per second
+-- *** runs 30x/sec
+-- output/graphics
 function _draw()
-	cls() -- clears the screen
+	cls() -- refresh screen
 
 	-- draw paddle at x=60, y=118
 	spr(1,60,118)
 
-	-- draw ball sprite at a
+	-- ** draw ball sprite at
 	-- variable y position
 	spr(2,60,y)
-end
+end -- /function _draw()
 __gfx__
 000000000000000000cccc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000cccccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

@@ -1,19 +1,18 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
--- top-down template
--- tile-based movement
--- *** lock and key ***
+-- top-down adventure
+-- lock and key example
 -- by matthew dimatteo
 
 -- tab 0: game loop
 -- tab 1: make player
 -- tab 2: move player
--- tab 3: *** inspect tile ***
--- tab 4: *** pickup ***
+-- *** tab 3: inspect tiles
+-- *** tab 4: pick up items
 
 -- runs once at start
+-- variables, objects
 function _init()
 	make_plyr() -- tab 1
 	
@@ -25,7 +24,7 @@ function _init()
 	objx=tx
 	objy=ty
 	
-	-- *** score / collection ***
+	-- *** score / collection
 	fruits = 0
 	keys = 0
 end -- /function _init()
@@ -34,8 +33,8 @@ end -- /function _init()
 -- movement, calculation
 function _update()
 	move_plyr() -- tab 2
-	inspect() -- *** tab 3 ***
-	pickup() -- *** tab 4 ***
+	inspect() -- *** tab 3
+	pickup() -- *** tab 4
 end -- /function _update()
 
 -- runs 30x/sec
@@ -58,12 +57,13 @@ function _draw()
 	-- trying to inspect
 	rect(objx*8,objy*8,8*objx+8,8*objy+8,14)
 
-	-- *** print collection ***
+	-- *** print collection
 	print("fruits: "..fruits,12,12,0)
 	print("keys:   "..keys,12,20,0)
 end -- /function _draw()
 -->8
--- make player --
+-- make player
+-- call this function in _init()
 function make_plyr()
 	plyr = {} -- table
 	plyr.n = 64 -- sprite number
@@ -85,6 +85,7 @@ function make_plyr()
 end -- /function make_plyr()
 -->8
 -- move player
+-- call this function in _update()
 function move_plyr()
 
 	-- instead of just moving,
@@ -165,7 +166,8 @@ function move_plyr()
 	
 end -- /function move_plyr()
 -->8
--- *** interact with tiles ***
+-- *** interact with tiles
+-- call this function in _update()
 function inspect()
 
 	-- coordinates of object tile
@@ -198,7 +200,7 @@ function inspect()
 	fruit2 = 2 -- collect 2 fruit
 	fruit3 = 3 -- collect 3 fruit
 	
-	-- *** door flag ***
+	-- *** door flag
 	door   = 5
 	
 	-- true/false is flag on
@@ -207,7 +209,7 @@ function inspect()
 	is_fruit2 = fget(objn,fruit2)
 	is_fruit3 = fget(objn,fruit3)
 	
-	-- *** check if door **
+	-- *** check if door
 	is_door   = fget(objn,door)
 	
 	-- press x to interact with tiles
@@ -228,7 +230,7 @@ function inspect()
 			mset(objx,objy,4)
 			fruits += 3 -- ad to score
 			
-		-- *** open door ***
+		-- *** open door
 		elseif is_door == true then
 			sfx(4) -- play sound
 			-- replace with open doorway
@@ -239,7 +241,8 @@ function inspect()
 	
 end -- /function inspect()
 -->8
--- *** pick up items by walking over them ***
+-- *** pick up items
+-- call this function in _update()
 function pickup()
 
 	-- get sprite number of tile

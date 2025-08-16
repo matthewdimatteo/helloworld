@@ -1,18 +1,17 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
--- top-down template
--- tile-based movement
--- *** item collection ***
+-- top-down adventure
+-- item collection example
 -- by matthew dimatteo
 
 -- tab 0: game loop
 -- tab 1: make player
 -- tab 2: move player
--- tab 3: *** inspect tile ***
+-- *** tab 3: inspect tile
 
 -- runs once at start
+-- variables, objects
 function _init()
 	make_plyr() -- tab 1
 	
@@ -20,11 +19,11 @@ function _init()
 	tx=plyr.x
 	ty=plyr.y
 	
-	-- *** target object coords ***
+	-- *** target object coords
 	objx=tx
 	objy=ty
 	
-	-- *** score / collection ***
+	-- *** score / collection
 	fruits = 0
 end -- /function _init()
 
@@ -32,7 +31,7 @@ end -- /function _init()
 -- movement, calculation
 function _update()
 	move_plyr() -- tab 2
-	inspect() -- *** tab 3 ***
+	inspect() -- *** tab 3
 end -- /function _update()
 
 -- runs 30x/sec
@@ -59,7 +58,8 @@ function _draw()
 	print("fruits: "..fruits,12,12,0)
 end -- /function _draw()
 -->8
--- make player --
+-- make player
+-- call this function in _init()
 function make_plyr()
 	plyr = {} -- table
 	plyr.n = 64 -- sprite number
@@ -81,6 +81,7 @@ function make_plyr()
 end -- /function make_plyr()
 -->8
 -- move player
+-- call this function in _update()
 function move_plyr()
 
 	-- instead of just moving,
@@ -161,7 +162,8 @@ function move_plyr()
 	
 end -- /function move_plyr()
 -->8
--- *** item collection ***
+-- *** item collection
+-- call this function in _update()
 function inspect()
 
 	-- coordinates of object tile

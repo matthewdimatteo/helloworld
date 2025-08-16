@@ -1,9 +1,8 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
 -- intro to game programming
--- example 2: coordinate plane
+-- lesson 02: coordinate plane
 -- by matthew dimatteo
 
 cls() -- clear the screen

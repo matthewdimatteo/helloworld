@@ -2,18 +2,41 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 -- sidescrolling platformer
--- lesson 00: assets only
+-- base template
 -- by matthew dimatteo
+
+-- tab 0: game loop
+-- tab 1: make player
+-- tab 2: move player
+-- tab 3: map collision
+-- tab 4: debug hud
 
 -- runs once at start
 -- variables, objects
 function _init()
+	debug = true -- debug mode
+	
+	-- physics forces
+	fric = 0.85 -- friction
+	grav = 0.3 -- gravity
 
+	-- variables for plyr
+	make_plyr() -- tab 1
 end -- /function _init()
 
 -- runs 30x/sec
 -- movement, calculation
 function _update()
+	move_plyr() -- tab 2
+
+	-- press z to toggle debug mode
+	if btnp(🅾️) then
+		if debug == true then
+			debug = false
+				else
+			debug = true
+		end -- /if debug
+	end -- /if btnp(🅾️)
 
 end -- /function _update()
 
@@ -21,7 +44,270 @@ end -- /function _update()
 -- output/graphics
 function _draw()
 	cls() -- refresh screen
+	map() -- draw map
+
+	-- draw player sprite
+	spr(plyr.n,plyr.x,plyr.y,plyr.w/8,plyr.h/8,plyr.flip)
+
+	-- show debug screen
+	if debug then
+		debug_scrn() -- tab 4
+	else
+		print("press z for debug mode",19,2,5)
+	end -- /if debug
+
 end -- /function _draw()
+-->8
+-- make player
+-- call this function in _init()
+function make_plyr()
+	plyr = {} -- table
+	
+	plyr.n = 1 -- sprite number
+
+	-- x,y coordinates
+	plyr.x = 3*8 -- 24 pixels
+	plyr.y = 14*8 -- 112 pixels
+	
+	-- width and height in pixels
+	-- needed for map collision
+	plyr.w=8
+	plyr.h=8
+	
+	-- base speed
+	plyr.xspd=0.5 -- x speed
+	plyr.yspd=3 -- y speed
+	
+	-- active speed
+	plyr.dx=0 -- change in x
+	plyr.dy=0 -- change in y
+	
+	-- player state
+	plyr.dir = ➡️ -- direction
+	plyr.flip =false
+
+	-- number of jumps left
+	plyr.basejumps = 2
+	plyr.jumps = plyr.basejumps
+
+	-- collision hitbox coords
+	rx1=0 ry1=0 rx2=0 ry2=0
+	
+end -- /function make_plyr()
+-->8
+-- move player
+-- call this function in _update()
+function move_plyr()
+	
+	-- apply friction so the plyr
+	-- eventually stops moving
+	plyr.dx *= fric
+	
+	-- apply gravity so the plyr
+	-- does not float endlessly
+	plyr.dy += grav
+	
+	-- move left
+	if btn(⬅️) then
+		-- subtract from change in x
+		plyr.dx -= plyr.xspd
+		
+		-- track player's direction
+		plyr.dir = ⬅️
+		
+		-- flip the sprite
+		plyr.flip = true
+	end -- /if btn(⬅️)
+	
+	-- move right
+	if btn(➡️) then
+		-- add to change in x
+		plyr.dx += plyr.xspd
+
+		-- track player's direction
+		plyr.dir = ➡️
+		
+		-- un-flip sprite
+		plyr.flip = false
+	end -- /if btn(⬅️)
+	
+	-- jump
+	if (btnp(⬆️) or btnp(❎))
+	and plyr.jumps > 0
+	then
+		plyr.dy = -plyr.yspd
+		plyr.jumps -= 1
+	end -- /if btnp(⬆️/❎)
+	
+	-- test collision below
+	if plyr.dy > 0 then
+	
+		-- stop falling when a solid
+		-- tile is below the player
+		if mcollide(plyr,⬇️,0)
+			then
+			plyr.dy = 0
+			
+			-- reset jump count
+			plyr.jumps = plyr.basejumps
+
+			-- correct y position if
+			-- fell into ground
+			plyr.y -= plyr.y%8
+		end -- /if mcollide down
+	
+	end -- /if plyr.dy < / > 0
+
+	-- test collision on left
+	if plyr.dx < 0 then
+	
+		-- prevent movement through
+		-- walls to the left
+		if mcollide(plyr,⬅️,0) then
+			plyr.dx = 0
+		
+			-- correct x position to
+			-- avoid getting stuck in wall
+			plyr.x=ceil((plyr.x-1)/8)*8
+		end -- /if mcollide left
+	
+	-- test collision on right
+	elseif plyr.dx > 0 then
+	
+		-- prevent movement through
+		-- walls to the right
+		if mcollide(plyr,➡️,0) then
+			plyr.dx = 0
+		
+			-- correct x position to
+			-- avoid getting stuck in wall
+			plyr.x=flr((plyr.x+1)/8)*8
+			--plyr.x -= plyr.x%8
+		end -- /if mcollide right
+	
+	end -- /if plyr.dx < / > 0
+	
+	-- update x,y by the calculated
+	-- change (delta x, delta y)
+	plyr.x += plyr.dx
+	plyr.y += plyr.dy
+	
+end -- /function move_plyr()
+-->8
+-- map collision
+
+-- call this function in 
+-- move_plyr() in an if
+-- statement, like this:
+
+-- if mcollide(plyr,⬇️,0) then
+-- // run code for what happens
+-- // when collision is true
+-- end 
+function mcollide(obj,dir,flag)
+	
+	-- determine location of map
+	-- tile relative to player
+	-- (depending on direction)
+	if dir == ⬅️ then
+		x1 = obj.x-1
+		y1 = obj.y
+		x2 = x1
+		y2 = y1+obj.h-1
+	elseif dir == ➡️ then
+		x1 = obj.x+obj.w
+		y1 = obj.y
+		x2 = x1
+		y2 = y1+obj.h-1
+	elseif dir == ⬆️ then
+		x1 = obj.x
+		y1 = obj.y-1
+		x2 = x1+obj.w-1
+		y2 = y1
+	elseif dir == ⬇️ then
+		x1 = obj.x
+		y1 = obj.y+obj.h
+		x2 = x1+obj.w-1
+		y2 = y1
+	end -- /if dir
+	
+	-- map coords to hitbox
+	-- (for debug purposes)
+	rx1=x1
+	ry1=y1
+	rx2=x2
+	ry2=y2
+	
+	-- find sprite number of
+	-- map tile adjacent to plyr
+	-- (check 4 points)
+	n1=mget(flr(x1/8),flr(y1/8))
+	n2=mget(flr(x2/8),flr(y1/8))
+	n3=mget(flr(x1/8),flr(y2/8))
+	n4=mget(flr(x2/8),flr(y2/8))
+	
+	-- check for flag on that
+	-- sprite (at all 4 points)
+	f1=fget(n1,flag)
+	f2=fget(n2,flag)
+	f3=fget(n3,flag)
+	f4=fget(n4,flag)
+	
+	-- if at least 1 of the 4
+	-- points is a sprite with
+	-- the flag, then collision
+	-- is true; return true/false
+	if f1 or f2 or f3 or f4 then
+		return true
+	else
+		return false
+	end -- /if f1 or f2 or f3 or f4
+
+end -- /mcollide()
+-->8
+-- debug hud
+-- call this function in _draw()
+function debug_scrn()
+	
+	-- draw collision hitbox
+	if mcollide(plyr,⬅️,0)
+	or mcollide(plyr,➡️,0)
+	or mcollide(plyr,⬇️,0)
+	then
+		rect(rx1,ry1,rx2,ry2,8)
+	end -- /if mcollide
+	
+	-- display active btn presses
+	c=10 -- color
+	if btn(⬅️) then
+		print("⬅️",plyr.x-10,plyr.y+2,c)
+	end --/if btn(⬅️)
+	
+	if btn(➡️) then
+		print("➡️",plyr.x+10,plyr.y+2,c)
+	end --/if btn(➡️)
+	
+	if btn(⬆️) then
+		print("⬆️",plyr.x,plyr.y-8,c)
+	end --/if btn(⬆️)
+	
+	if btn(❎) then
+		print("❎",plyr.x,plyr.y-8,c)
+	end --/if btn(❎)
+	
+	-- debug mode instructions
+	print("debug mode (z to toggle)",12,2,5)
+	
+	-- print player x,y position
+	coords = flr(plyr.x)..","..flr(plyr.y)
+	print(coords,plyr.x-5,plyr.y+10,7)
+	
+	-- print movement data
+	print("dx:"..plyr.dx,12,10,0)
+	print("dy:"..plyr.dy,12,18,0)
+	print("jumps left: "..plyr.jumps,12,26,0)
+	
+end -- /function debug_scrn()
 __gfx__
 0000000000aaaa000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000aaaaaa00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

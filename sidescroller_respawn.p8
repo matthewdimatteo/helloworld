@@ -1,19 +1,18 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
--- sidescroller template
--- with physics
--- *** respawn ***
+-- sidescrolling platformer
+-- respawn example
 -- by matthew dimatteo
 
 -- tab 0: game loop
 -- tab 1: make player
 -- tab 2: move player
--- tab 3: map collision function
--- tab 4: *** respawn function ***
+-- tab 3: map collision
+-- *** tab 4: respawn
 
 -- runs once at start
+-- variables, objects
 function _init()
 
 	-- physics
@@ -25,13 +24,15 @@ function _init()
 	
 end -- /function _init()
 
--- runs 30 times per second
+-- runs 30x/sec
+-- movement, calculation
 function _update()
 	move_plyr() --  tab 2
-	respawn() -- *** tab 4 ***
+	respawn() -- *** tab 4 
 end -- /function _update()
 
--- runs 30 times per second
+-- runs 30x/sec
+-- output/graphics
 function _draw()
 	cls() -- refresh screen
 	map() -- draw map
@@ -46,7 +47,7 @@ function _draw()
 end -- /function _draw()
 -->8
 -- make player
--- call in _init()
+-- call this function in _init()
 function make_plyr()
 
 	-- table
@@ -89,8 +90,8 @@ function make_plyr()
 	
 end -- /function make_plyr()
 -->8
--- move player function
--- call in _update()
+-- move player
+-- call this function in _update()
 function move_plyr()
 	
 	-- apply friction so the plyr
@@ -188,14 +189,15 @@ function move_plyr()
 	
 end -- /function move_plyr()
 -->8
--- map collision function
+-- map collision
 
--- call in move_plyr() within
--- an if statement, like this:
+-- call this function in 
+-- move_plyr() in an if
+-- statement, like this:
 
 -- if mcollide(plyr,⬇️,0) then
 -- // run code for what happens
--- // when collision is true
+-- // when collision occurs
 -- end
 function mcollide(obj,dir,flag)
 	
@@ -249,10 +251,10 @@ function mcollide(obj,dir,flag)
 		return false
 	end -- /if f1 or f2 or f3 or f4
 
-end -- /mcollide()
+end -- /function mcollide()
 -->8
--- *** respawn function ***
--- (call in _update or plyr_move)
+-- *** respawn 
+-- call this function in _update()
 function respawn()
 
 	-- flag number for pit tiles

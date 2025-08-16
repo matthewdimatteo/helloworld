@@ -1,9 +1,8 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
--- sidescroller with physics
--- step 06: gravity
+-- sidescrolling platformer
+-- lesson 06: gravity
 -- by matthew dimatteo
 
 -- tab 0: game loop
@@ -11,22 +10,25 @@ __lua__
 -- tab 2: move player
 
 -- runs once at start
+-- variables, objects
 function _init()
 
 	-- physics forces
 	fric = 0.85 -- friction
-	grav = 0.3 -- *** gravity ***
+	grav = 0.3 -- *** gravity 
 
 	-- variables for plyr
 	make_plyr() -- tab 1
 end -- /function _init()
 
--- runs 30 times per second
+-- runs 30x/sec
+-- movement, calculation
 function _update()
 	move_plyr() --  tab 2
 end -- /function _update()
 
--- runs 30 times per second
+-- runs 30x/sec
+-- output/graphics
 function _draw()
 	cls() -- refresh screen
 	map() -- draw map
@@ -36,7 +38,7 @@ function _draw()
 end -- /function _draw()
 -->8
 -- make player
--- call in _init()
+-- call this function in _init()
 function make_plyr()
 	plyr = {} -- table
 	
@@ -56,7 +58,7 @@ function make_plyr()
 end -- /function make_plyr()
 -->8
 -- move player
--- call in _update()
+--- call this function in _update()
 function move_plyr()
 	
 	-- apply friction so the plyr
@@ -64,7 +66,7 @@ function move_plyr()
 	plyr.dx *= fric
 
 	-- *** apply gravity so plyr
-	-- does not float endlessly ***
+	-- does not float endlessly 
 	plyr.dy += grav
 	
 	-- move left
@@ -90,7 +92,7 @@ function move_plyr()
 	plyr.x += plyr.dx
 	plyr.y += plyr.dy
 	
-end -- end function move_plyr()
+end -- /function move_plyr()
 __gfx__
 0000000000aaaa000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000aaaaaa00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

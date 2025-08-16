@@ -1,9 +1,8 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
 -- intro to game programming
--- example 9: move player
+-- lesson 09: move player
 -- by matthew dimatteo
 
 -- runs once at start
@@ -12,29 +11,29 @@ function _init()
 	n=1 -- sprite number
 	x=4 -- x coordinate
 	y=60 -- y coordinate
-	spd=1 -- speed
+	spd=1 -- *** speed
 end -- /function _init()
 
 -- runs 30x/sec
 -- movement, calculation
 function _update()
 
-	-- move left
+	-- *** move left
 	if btn(⬅️) then
 		x = x - spd
 	end -- /if btn(⬅️)
 	
-	-- move right
+	-- *** move right
 	if btn(➡️) then
 		x = x + spd
 	end -- /if btn(➡️)
 	
-	-- move up
+	-- *** move up
 	if btn(⬆️) then
 		y = y - spd
 	end -- /if btn(⬆️)
 	
-	-- move down
+	-- *** move down
 	if btn(⬇️) then
 		y = y + spd
 	end -- /if btn(⬇️)
@@ -45,7 +44,7 @@ end -- /function _update()
 -- output/graphics
 function _draw()
 	cls() -- refresh screen
-	spr(n,x,y) -- draw plyr sprite
+	spr(n,x,y) -- draw player
 	spr(2,116,60) -- draw key
 end -- /function _draw()
 __gfx__

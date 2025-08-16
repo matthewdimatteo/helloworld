@@ -1,16 +1,16 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
 -- top-down adventure
--- step 02: input and movement
+-- lesson 02: input and movement
 -- by matthew dimatteo
 
 -- tab 0: game loop
 -- tab 1: make player
--- tab 2: *** move player ***
+-- *** tab 2: move player
 
 -- runs once at start
+-- variables, objects
 function _init()
 	make_plyr() -- tab 1
 end -- /function _init()
@@ -18,7 +18,7 @@ end -- /function _init()
 -- runs 30x/sec
 -- movement, calculation
 function _update()
-	move_plyr() -- *** tab 2 ***
+	move_plyr() -- *** tab 2
 end -- /function _update()
 
 -- runs 30x/sec
@@ -33,7 +33,8 @@ function _draw()
 	spr(plyr.n,plyr.x*8,plyr.y*8)
 end -- /function _draw()
 -->8
--- make player --
+-- make player
+-- call this function in _init()
 function make_plyr()
 	plyr = {} -- table
 	plyr.n = 64 -- sprite number
@@ -43,7 +44,8 @@ function make_plyr()
 	plyr.y = 6
 end -- /function make_plyr()
 -->8
--- *** move player ***
+-- *** move player
+-- call this function in _update()
 function move_plyr()
 
 	-- left

@@ -1,9 +1,8 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
--- sidescroller with physics
--- step 05: jumping
+-- sidescrolling platformer
+-- lesson 05: jumping
 -- by matthew dimatteo
 
 -- tab 0: game loop
@@ -11,6 +10,7 @@ __lua__
 -- tab 2: move player
 
 -- runs once at start
+-- variables, objects
 function _init()
 	fric = 0.85 -- friction
 
@@ -18,12 +18,14 @@ function _init()
 	make_plyr() -- tab 1
 end -- /function _init()
 
--- runs 30 times per second
+-- runs 30x/sec
+-- movement, calculation
 function _update()
 	move_plyr() --  tab 2
 end -- /function _update()
 
--- runs 30 times per second
+-- runs 30x/sec
+-- output/graphics
 function _draw()
 	cls() -- refresh screen
 	map() -- draw map
@@ -33,7 +35,7 @@ function _draw()
 end -- /function _draw()
 -->8
 -- make player
--- call in _init()
+-- call this function in _init()
 function make_plyr()
 	plyr = {} -- table
 	
@@ -43,17 +45,17 @@ function make_plyr()
 	plyr.x = 3*8 -- 24 pixels
 	plyr.y = 14*8 -- 112 pixels
 
-	-- *** base speed ***
+	-- *** base speed 
 	plyr.xspd=0.5 -- x speed
 	plyr.yspd=3 -- *** y speed
 	
-	-- *** active speed ***
+	-- *** active speed 
 	plyr.dx=0 -- change in x
 	plyr.dy=0 -- *** change in y
 end -- /function make_plyr()
 -->8
 -- move player
--- call in _update()
+-- call this function in _update()
 function move_plyr()
 	
 	-- apply friction so the plyr
@@ -72,18 +74,18 @@ function move_plyr()
 		plyr.dx += plyr.xspd
 	end -- /if btn(⬅️)
 
-	-- *** jump ***
+	-- *** jump 
 	if btnp(⬆️) or btnp(❎)
 	then
 		plyr.dy = -plyr.yspd
 	end -- /if btnp(⬆️/❎)
 
 	-- *** update x,y by calculated
-	-- change (delta x, delta y) ***
+	-- change (delta x, delta y) 
 	plyr.x += plyr.dx
 	plyr.y += plyr.dy -- *** dy
 	
-end -- end function move_plyr()
+end -- /function move_plyr()
 __gfx__
 0000000000aaaa000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000aaaaaa00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

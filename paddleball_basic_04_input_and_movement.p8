@@ -6,52 +6,57 @@ __lua__
 -- by matthew dimatteo
 
 -- runs once at start
+-- variables, objects
 function _init()
 
-	-- declare variables for paddle
+	-- paddle variables 
 	padn = 1 -- sprite number
 	padx = 60 -- x coordinate
 	pady = 118 -- y coordinate
 	padspd = 3 -- speed
 	
-	-- declare variables for ball
+	-- ball variables 
 	baln = 2 -- sprite number
 	balx = 60 -- x coordinate
 	baly = 2 -- y coordinate
 	balspd = 3 -- speed	
 
-end -- end function _init()
+end -- /function _init()
 
--- loops 30 times per second
+-- runs 30x/sec
+-- movement, calculation
 function _update()
 
 	-- increase ball y by its speed
 	baly = baly + balspd
 	
-	-- left arrow moves pad left
-	-- type shift l for ⬅️
+	-- *** left arrow moves
+	-- paddle left
+	-- (type shift l for ⬅️)
 	if btn(⬅️) then
 		padx = padx - padspd
-	end
+	end -- /if btn(⬅️)
 
-	-- right arrow moves pad right
-	-- type shift r for ➡️
+	-- *** right arrow moves
+	-- paddle right
+	-- (type shift r for ➡️)
 	if btn(➡️) then
 		padx = padx + padspd
-	end
+	end -- /if btn(➡️)
 	
-end -- end function _update()
+end -- /function _update()
 
--- loops 30 times per second
+-- runs 30x/sec
+-- output/graphics
 function _draw()
-	cls() -- clears the screen
+	cls() -- refresh screen
 	
 	-- draw paddle sprite
 	spr(padn,padx,pady)
 	
 	-- draw ball sprite
 	spr(baln,balx,baly)
-end
+end -- /function _draw()
 __gfx__
 000000000000000000cccc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000cccccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

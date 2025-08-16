@@ -1,19 +1,18 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
--- sidescroller template
--- with physics
--- *** animation ***
+-- sidescrolling platformer
+-- animation example
 -- by matthew dimatteo
 
 -- tab 0: game loop
 -- tab 1: make player
 -- tab 2: move player
--- tab 3: map collision function
--- tab 4: *** animation ***
+-- tab 3: map collision
+-- *** tab 4: animation
 
 -- runs once at start
+-- variables, objects
 function _init()
 
 	-- physics forces
@@ -23,18 +22,20 @@ function _init()
 	-- variables for plyr
 	make_plyr() -- tab 1
 
-	-- *** animation timer ***
+	-- *** animation timer 
 	animtime = 0
 	
 end -- /function _init()
 
--- runs 30 times per second
+-- runs 30x/sec
+-- movement, calculation
 function _update()
 	move_plyr() --  tab 2
-	animate() -- *** tab 4 ***
+	animate() -- *** tab 4 
 end -- /function _update()
 
--- runs 30 times per second
+-- runs 30x/sec
+-- output/graphics
 function _draw()
 	cls() -- refresh screen
 	map() -- draw map
@@ -42,14 +43,14 @@ function _draw()
 	-- draw player sprite
 	spr(plyr.n,plyr.x,plyr.y,plyr.w/8,plyr.h/8,plyr.flip)
 
-	-- *** print animation timer ***
+	-- *** print animation timer 
 	print("time()   "..time(),12,2,0)
 	print("animtime "..animtime,12,10,0)
 	print("spr "..plyr.n,plyr.x-5,plyr.y-10,0)
 end -- /function _draw()
 -->8
 -- make player
--- call in _init()
+-- call this function in _init()
 function make_plyr()
 	plyr = {} -- table
 	
@@ -77,8 +78,8 @@ function make_plyr()
 	
 end -- /function make_plyr()
 -->8
--- move player function
--- call in _update()
+-- move player
+-- call this function in _update()
 function move_plyr()
 	
 	-- apply friction so the plyr
@@ -176,14 +177,15 @@ function move_plyr()
 	
 end -- /function move_plyr()
 -->8
--- map collision function
+-- map collision
 
--- call in move_plyr() within
--- an if statement, like this:
+-- call this function in 
+-- move_plyr() in an if
+-- statement, like this:
 
 -- if mcollide(plyr,⬇️,0) then
 -- // run code for what happens
--- // when collision is true
+-- // when collision occurs
 -- end
 function mcollide(obj,dir,flag)
 	
@@ -237,9 +239,10 @@ function mcollide(obj,dir,flag)
 		return false
 	end -- /if f1 or f2 or f3 or f4
 
-end -- /mcollide()
+end -- /function mcollide()
 -->8
--- *** animate player sprite ***
+-- *** animate player sprite 
+-- call this function in _update()
 function animate()
 
 	-- sprite numbers for anim
@@ -280,7 +283,7 @@ function animate()
 	-- idle/default sprite
 	else
 		plyr.n = animstart
-	end -- /if/else landed
+	end -- /if-else landed
 
 end -- /function animate()
 __gfx__

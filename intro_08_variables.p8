@@ -1,16 +1,14 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
 -- intro to game programming
--- example 8: variables
+-- lesson 08: variables
 -- by matthew dimatteo
-
--- moving a sprite
 
 -- runs once at start
 -- variables, objects
 function _init()
+	-- *** player variables
 	n=1 -- sprite number
 	x=4 -- x coordinate
 	y=60 -- y coordinate
@@ -26,8 +24,12 @@ end -- /function _update()
 -- output/graphics
 function _draw()
 	cls() -- refresh screen
-	spr(n,x,y) -- draw plyr sprite
-	spr(2,116,60) -- draw key
+
+	-- *** draw sprites
+	-- "plug in" the player
+	-- variables here
+	spr(n,x,y) -- player
+	spr(2,116,60) -- key
 end -- /function _draw()
 __gfx__
 00000000009999000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

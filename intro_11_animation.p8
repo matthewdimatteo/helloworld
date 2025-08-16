@@ -1,17 +1,22 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
 -- intro to game programming
--- example 11: animation
+-- lesson 11: animation
 -- by matthew dimatteo
+
+-- tab 0: game loop
+-- tab 1: make player
+-- tab 2: move player
+-- *** tab 3: animate key
 
 -- runs once at start
 -- variables, objects
 function _init()
 	make_plyr() -- tab 1
 	
-	key = 2 -- key sprite
+	-- *** key variables
+	key = 2 -- sprite number
 	timer = 0 -- animation timer
 end -- /function _init()
 
@@ -19,18 +24,23 @@ end -- /function _init()
 -- movement, calculation
 function _update()
 	move_plyr() -- tab 2	
-	anim_key() -- tab 3
+	anim_key() -- *** tab 3
 end -- /function _update()
 
 -- runs 30x/sec
 -- output/graphics
 function _draw()
 	cls() -- refresh screen
-	spr(n,x,y) -- draw plyr sprite
-	spr(key,116,60) -- draw key
+	spr(n,x,y) -- draw player
+
+	-- *** plug in the key's sprite
+	-- number to draw whichever
+	-- frame of the animation
+	-- is the current frame
+	spr(key,116,60)
 end -- /function _draw()
 -->8
--- make player function
+-- make player
 function make_plyr()
 	n=1 -- sprite number
 	x=4 -- x coordinate
@@ -38,7 +48,7 @@ function make_plyr()
 	spd=1 -- speed
 end -- /function make_plyr()
 -->8
--- move player function
+-- move player
 function move_plyr()
 
 	-- move left
@@ -63,7 +73,7 @@ function move_plyr()
 	
 end -- /function move_plyr()
 -->8
--- animate key
+-- *** animate key
 function anim_key()
 	
 	-- rate of animation
@@ -93,7 +103,7 @@ function anim_key()
 		timer = 0
 	end -- /if timer >= rate
 	
-end -- /function 
+end -- /function anim_key()
 __gfx__
 000000000099990000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000009aaaa9000000000000000700a0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

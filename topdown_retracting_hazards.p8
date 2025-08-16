@@ -1,19 +1,18 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
--- top-down template
--- tile-based movement
--- *** retracting hazards ***
+-- top-down adventure
+-- retracting hazards example
 -- by matthew dimatteo
 
 -- tab 0: game loop
 -- tab 1: make player
 -- tab 2: move player
--- tab 3: *** hazards ***
--- tab 4: *** retraction ***
+-- *** tab 3: hazards
+-- *** tab 4: retraction
 
 -- runs once at start
+-- variables, objects
 function _init()
 	make_plyr() -- tab 1
 	
@@ -25,13 +24,13 @@ function _init()
 	objx=tx
 	objy=ty
 	
-	-- *** game variables ***
+	-- *** game variables
 	lives = 3
 	max_health = 100
 	health = max_health
 	gameover = false
 	
-	-- *** hazard timers ***
+	-- *** hazard timers
 	timer = 0 -- damage timer
 	anim = 0 -- animated tile timer
 end -- /function _init()
@@ -44,8 +43,8 @@ function _update()
 	-- not a gameover
 	if not gameover then
 		move_plyr() -- tab 2
-		hazards() -- *** tab 3 ***
-		retract() -- *** tab 4 ***
+		hazards() -- *** tab 3
+		retract() -- *** tab 4
 	end -- /if not game over
 	
 end -- /function _update()
@@ -64,12 +63,12 @@ function _draw()
 	
 	rect(tx*8,ty*8,8*tx+8,8*ty+8,7)
 	
-	-- *** print stats ***
+	-- *** print stats
 	print("lives:  "..lives,12,12,0)
 	print("health: "..health,12,20,0)
 	print("timer:  "..anim,12,28,8)
 
-	-- *** gameover message ***
+	-- *** gameover message
 	if gameover then
 		rect(33,49,95,69,8)
 		rectfill(34,50,94,68,6)
@@ -78,7 +77,8 @@ function _draw()
 	
 end -- /function _draw()
 -->8
--- make player --
+-- make player
+-- call this function in _init()
 function make_plyr()
 	plyr = {} -- table
 	plyr.n = 64 -- sprite number
@@ -100,6 +100,7 @@ function make_plyr()
 end -- /function make_plyr()
 -->8
 -- move player
+-- call this function in _update()
 function move_plyr()
 
 	-- instead of just moving,
@@ -180,7 +181,8 @@ function move_plyr()
 	
 end -- /function move_plyr()
 -->8
--- *** hazard tiles ***
+-- *** hazard tiles
+-- call this function in _update()
 function hazards()
 
 	-- get sprite number of tile
@@ -250,9 +252,10 @@ function hazards()
 		gameover = true
 	end -- /if lives <= 0
 
-end -- /function pickup()
+end -- /function hazards()
 -->8
---- *** retraction ***
+--- *** retraction
+-- call this function in _update()
 function retract()
 
 	-- sprite flags

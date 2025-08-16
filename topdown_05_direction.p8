@@ -1,9 +1,8 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
 -- top-down adventure
--- step 05: direction
+-- lesson 05: direction
 -- by matthew dimatteo
 
 -- tab 0: game loop
@@ -11,6 +10,7 @@ __lua__
 -- tab 2: move player
 
 -- runs once at start
+-- variables, objects
 function _init()
 	make_plyr() -- tab 1
 	
@@ -34,7 +34,7 @@ function _draw()
 	-- draw player sprite
 	-- multiply x,y by 8 to
 	-- convert from tiles to pixels
-	-- *** add values for w,h,flip ***
+	-- *** add values for w,h,flip
 	spr(plyr.n,plyr.x*8,plyr.y*8,plyr.w,plyr.h,plyr.flip)
 	
 	-- draw box where player is
@@ -42,7 +42,8 @@ function _draw()
 	--rect(tx*8,ty*8,8*tx+8,8*ty+8,7)
 end -- /function _draw()
 -->8
--- make player --
+-- make player
+-- call this function in _init()
 function make_plyr()
 	plyr = {} -- table
 	plyr.n = 64 -- sprite number
@@ -52,18 +53,19 @@ function make_plyr()
 	plyr.y = 6
 
 	-- *** tiles wide, tall
-	-- multiply by 8 to get px ***
+	-- multiply by 8 to get px
 	plyr.w = 1
 	plyr.h = 1
 
-	-- *** direction ***
+	-- *** direction
 	plyr.dir = ⬇️ -- down
 	
-	-- *** whether to flip sprite ***
+	-- *** whether to flip sprite
 	plyr.flip= false
 end -- /function make_plyr()
 -->8
 -- move player
+-- call this function in _update()
 function move_plyr()
 
 	-- instead of just moving,
@@ -78,7 +80,7 @@ function move_plyr()
 		tx = plyr.x - 1
 		ty = plyr.y
 		
-		-- *** set direction ***
+		-- *** set direction
 		plyr.dir = ⬅️
 		plyr.n = 96
 		plyr.flip = true
@@ -90,7 +92,7 @@ function move_plyr()
 		tx = plyr.x + 1
 		ty = plyr.y
 		
-		-- *** set direction ***
+		-- *** set direction
 		plyr.dir = ➡️
 		plyr.n = 96
 		plyr.flip = false
@@ -102,7 +104,7 @@ function move_plyr()
 		tx = plyr.x
 		ty = plyr.y - 1
 		
-		-- *** set direction ***
+		-- *** set direction
 		plyr.dir = ⬆️
 		plyr.n = 80
 		plyr.flip = false
@@ -114,7 +116,7 @@ function move_plyr()
 		tx = plyr.x
 		ty = plyr.y + 1
 		
-		-- *** set direction ***
+		-- *** set direction
 		plyr.dir = ⬇️
 		plyr.n = 64
 		plyr.flip = false

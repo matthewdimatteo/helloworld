@@ -10,6 +10,7 @@ __lua__
 -- tab 3: move ball and collide
 
 -- runs once at start
+-- variables, objects
 function _init()
 
 	-- "call" functions to
@@ -17,9 +18,10 @@ function _init()
 	make_paddle() -- tab 1
 	make_ball() -- tab 1
 
-end -- end function _init()
+end -- /function _init()
 
--- loops 30 times per second
+-- runs 30x/sec
+-- movement, calculation
 function _update()
 	
 	-- "call" functions to
@@ -27,85 +29,94 @@ function _update()
 	move_paddle() -- tab 2
 	move_ball() -- tab 3
 	
-end -- end function _update()
+end -- /function _update()
 
--- loops 30 times per second
+-- runs 30x/sec
+-- output/graphics
 function _draw()
-	cls() -- clears the screen
+	cls() -- refresh screen
 	
 	-- draw paddle sprite
 	spr(padn,padx,pady)
 	
 	-- draw ball sprite
 	spr(baln,balx,baly)
-end
+end -- /function _draw()
 -->8
 -- make paddle and ball
 
--- declare variables for paddle
+-- paddle variables 
 function make_paddle()
 	padn = 1 -- sprite number
 	padx = 60 -- x coordinate
 	pady = 118 -- y coordinate
 	padspd = 3 -- speed	
+
+	-- we need to know width
+	-- and height of objects to
+	-- detect if they collide
 	padw = 8 -- width
 	padh = 2 -- height
-end
+end -- /function make_paddle()
 
--- declare variables for ball
+-- ball variables 
 function make_ball()
 	baln = 2 -- sprite number
 	balx = 60 -- x coordinate
 	baly = 2 -- y coordinate
 	balspd = 3 -- speed	
+
+	-- we need to know width
+	-- and height of objects to
+	-- detect if they collide
 	balw = 8 -- width
 	balh = 8 -- height
 	
-	-- we need  variables to track
-	-- the direction of the ball
+	-- *** we need variables to
+	-- track the ball's direction
 	balxdir = "" -- horizontal
 	balydir = "down" -- vertical
-end
+end -- /function make_ball()
 -->8
--- move paddle()
+-- move paddle
 function move_paddle()
 
 	-- left arrow moves pad left
 	-- type shift l for ⬅️
 	if btn(⬅️) then
 		padx = padx - padspd
-	end
+	end -- /if btn(⬅️)
 
 	-- right arrow moves pad right
 	-- type shift r for ➡️
 	if btn(➡️) then
 		padx = padx + padspd
-	end
+	end -- /if btn(➡️)
 	
 	-- keep pad on screen left
 	if padx < 0 then
 		padx = 0
-	end
+	end -- /if padx < 0
 	
 	-- keep pad on screen right
 	if padx > 120 then
 		padx = 120
-	end
+	end -- /if padx > 120
 	
-end -- end function make_paddle()
+end -- /function move_paddle()
 -->8
 -- move ball and collide
 function move_ball()
 	
-	-- move ball lower on screen
-	if balydir == "down" then
-		baly = baly + balspd
-	end
-	
-	-- move ball higher on screen
+	-- *** move ball up
 	if balydir == "up" then
 		baly = baly - balspd
-	end
+	end -- /if balydir == "up"
+
+	-- *** move ball down
+	if balydir == "down" then
+		baly = baly + balspd
+	end -- /if balydir == "down"
 	
 	-- collide with paddle
 	if 	balx + balw >= padx
@@ -113,16 +124,17 @@ function move_ball()
 	and	baly + balh >= pady
 	and baly <= pady + padh
 	then
-		-- reverse direction
+		-- *** reverse direction
+		-- after hittiing paddle
 		balydir = "up"
-	end
+	end -- /if-else collision
 	
-	-- bounce off ceiling
+	-- *** bounce off ceiling
 	if baly < 0 then
 		balydir = "down"
-	end
+	end -- /if baly < 0
 	
-end -- end function move_ball()
+end -- /function move_ball()
 __gfx__
 000000000000000000cccc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000cccccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

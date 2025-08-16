@@ -2,110 +2,70 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 -- top-down adventure
--- pixel-based movement example
+-- map collision: lg sprites
 -- by matthew dimatteo
 
 -- tab 0: game loop
 -- tab 1: make player
 -- *** tab 2: move player
--- tab 3: swap sprite
 
 -- runs once at start
 -- variables, objects
 function _init()
-	big=false -- type of sprite
 	make_plyr() -- tab 1
 	
 	-- target tile coords
 	tx=plyr.x
 	ty=plyr.y
 	tx2=tx
-	ty2=ty+plyr.h
-end -- /function _init()
+	ty2=ty
+end --/ function_init()
 
 -- runs 30x/sec
 -- movement, calculation
 function _update()
 	move_plyr() -- *** tab 2
-	
-	-- press z to swap sprite
-	if btnp(🅾️) then
-		swap_sprite() -- tab 3
-	end -- /if btnp(🅾️)
-	
-end -- /function _update()
+end --/ function _update()
 
 -- runs 30x/sec
 -- output/graphics
 function _draw()
-	cls() -- refresh screen
+	cls() -- clear screen
 	map() -- draw map
 	
 	-- draw player
-	spr(plyr.n,plyr.x,plyr.y,plyr.w/8,plyr.h/8,plyr.flip)
+	spr(plyr.n,plyr.x*8,plyr.y*8,plyr.sw,plyr.sh,plyr.flip)
 	
 	-- draw target coords as dots
-	rect(tx,ty,tx,ty,0) 
-	rect(tx2,ty2,tx2,ty2,0) 
- 
- -- print the sprite number of
- -- the adjacent map tiles
- print("tiles "..tn1..","..tn2,2,2,7)
- 
-	-- print flag-checking boolean
-	-- values (true if wall)
-	if is_wall1 == true then
-		print("is_wall1 true",70,2,7)
-	elseif is_wall1 == false then
-		print("is_wall1 false",70,2,7)
-	else
-		print("is_wall1 nil",70,2,7)
-	end -- /if is_wall1 == true
- 
-	-- print flag-checking boolean
-	-- values (true if wall)
-	if is_wall2 == true then
-		print("is_wall2 true",70,10,7)
-	elseif is_wall2 == false then
-		print("is_wall2 false",70,10,7)
-	else
-		print("is_wall2 nil",70,10,7)
-	end -- /if is_wall2 == true
- 
-	-- print plyr's px coordinates
-	print("pixel "..plyr.x..","..(plyr.y),2,10,7)
-end -- /function _draw()
+	rect(tx*8,ty*8,tx*8,ty*8,8) 
+	rect(tx2*8,ty2*8,tx2*8,ty2*8,8) 
+ 	 
+	-- print tile coodinates
+	print("tile  "..plyr.x..","..plyr.y,2,2,7)
+
+	-- print pixel coordinates
+	print("pixel "..(plyr.x*8)..","..(plyr.y*8),2,10,7)
+end --/ function _draw()
 -->8
 -- make player
 -- call this function in _init()
 function make_plyr()
 	plyr = {} -- player object
+	plyr.n=70 -- sprite number
 	
-	-- big sprite properties
-	if big == true then
-	 plyr.n=70 -- sprite number
-	 plyr.w=24 -- 24px width
-	 plyr.h=24 -- 24px height
+	-- sprite width, height
+	-- in tiles
+	plyr.sw=3 
+	plyr.sh=3 
 	
-	-- small sprite properties
-	else
-		plyr.n=64 -- sprite number
-		plyr.w=8 -- 8px width
-		plyr.h=8 -- 8px height
-	end -- /if/else big
-	
-	-- x,y pixel coordinates
-	plyr.x=16
-	plyr.y=24
+	-- x,y tile coords, not pixels
+	plyr.x=2
+	plyr.y=3
 	
 	-- direction
 	plyr.flip=false
 	plyr.dir=⬇️
-	
-	-- speed
-	plyr.spd=4 -- move 4px/btnp
-	
-end -- /function make_plyr()
+end --/function make_plyr()
 -->8
 -- *** move player
 -- call this function in _update()
@@ -113,7 +73,7 @@ function move_plyr()
 
 	-- left
 	if btnp(⬅️) then
-		-- target is 1px left of plyr
+		-- target 1 tile left of plyr
 		tx=plyr.x-1
 		ty=plyr.y
 		plyr.dir=⬅️
@@ -121,85 +81,84 @@ function move_plyr()
 		-- *** check a second point
 		-- at bottom of player
 		tx2=tx
-		ty2=plyr.y+plyr.h-1
-	end -- /if btnp(⬅️)
+		ty2=plyr.y+plyr.sh-1
+	end --/if btnp(⬅️)
 	
 	-- right
 	if btnp(➡️) then
-		-- target is 1px right of plyr
-		tx=plyr.x+plyr.w
+		-- target 1 tile right of plyr
+		tx=plyr.x+plyr.sw
 		ty=plyr.y
 		plyr.dir=➡️
 		
 		-- *** check a second point
 		-- at bottom of player
 		tx2=tx
-		ty2=plyr.y+plyr.h-1
-	end -- /if btnp(➡️)
+		ty2=plyr.y+plyr.sh-1
+	end --/if btnp(➡️)
 
 	-- up
 	if btnp(⬆️) then
-		-- target is 1px above player
+		-- target 1 tile above plyr
 		tx=plyr.x
 		ty=plyr.y-1
 		plyr.dir=⬆️
 		
 		-- *** check a second point
 		-- on right side of plyr
-		tx2=plyr.x+plyr.w-1
+		tx2=plyr.x+plyr.sw-1
 		ty2=ty
-	end -- /if btnp(⬆️)	
+	end --/if btnp(⬆️)	
 	
 	-- down
 	if btnp(⬇️) then
-		-- target is 1px below player
+		-- target 1 tile below plyr
 		tx=plyr.x
-		ty=plyr.y+plyr.h
+		ty=plyr.y+plyr.sh
 		plyr.dir=⬇️
 		
 		-- *** check a second point
 		-- on right side of plyr
-		tx2=plyr.x+plyr.w-1
+		tx2=plyr.x+plyr.sw-1
 		ty2=ty
-	end -- /if btnp(⬇️)
-	
+	end --/if btnp(⬇️)
+
 	-- sprite number of target tile
-	-- *** check both points and
-	-- divide x,y by 8 to convert
-	-- from px to tiles
-	tn1=mget(flr(tx/8),flr(ty/8))
-	tn2=mget(flr(tx2/8),flr(ty2/8))
+	-- *** check both points
+	tn1 = mget(tx,ty)
+	tn2 = mget(tx2,ty2)
 	
+	-- sprite flags
+	wall = 0
+ 
 	-- true/false is flag 0 on
 	-- for that sprite
 	-- *** check both points
-	is_wall1=fget(tn1,0)
-	is_wall2=fget(tn2,0)
-	
+	is_wall1 = fget(tn1,wall)
+	is_wall2 = fget(tn2,wall)
+ 
 	-- move to target if no wall
 	-- *** at either point
 	if is_wall1 == false 
 	and is_wall2 == false then
-	
-		-- move left
-		if btnp(⬅️) then
-			plyr.x-=plyr.spd
-		end -- /if btnp(⬅️)
 		
-		-- move right
+		-- *** because we must check
+		-- multiple tiles to the right
+		-- or below the player, but
+		-- only want to move one tile
+		-- at a time, we must reset
+		-- tx and ty here
 		if btnp(➡️) then
-			plyr.x+=plyr.spd
-		end -- /if btnp(➡️)
-		
-		-- move up
-		if btnp(⬆️) then
-			plyr.y-=plyr.spd
-		end -- /if btnp(⬆️)
-		
-		-- move down
+			tx = plyr.x+1
+		end --/if right
+
 		if btnp(⬇️) then
-			plyr.y+=plyr.spd
-		end -- /if btnp(⬇️)
+			ty = plyr.y+1
+		end --/if down
+
+		-- move to target location
+		plyr.x=tx
+		plyr.y=ty
 	
 	else 
 		-- play bump sound if blocked
@@ -207,33 +166,10 @@ function move_plyr()
 		or btn(⬆️) or btn(⬇️) then
 			sfx(0)
 		end -- /if btn
-		
-	end -- /if is_wall1/2 false
-	
-end -- /function move_plyr()
--->8
--- swap sprite
--- call this function in _update()
-function swap_sprite()
 
-	-- switch from big to small
-	-- and vice-versa
-	if big == true then
-		big = false
-	elseif big == false then
-		big = true
-	end -- /if big
- 
-	-- re-initialize the player
-	make_plyr() -- tab 1
- 
-	-- update map collision vars
-	tx=plyr.x
-	ty=plyr.y
-	tx2=tx
-	ty2=ty+plyr.h
- 
-end -- /function swap_sprite()
+	end -- /if is_wall == false
+	
+end --/function move_plyr()
 __gfx__
 00000000bbbbbbbb3333333333555533bbb33bbbbbb33bbb00000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000bbbbbbbb3333333335555553bb3333bbbb3333bb00000000000000000000000000000000000000000000000000000000000000000000000000000000

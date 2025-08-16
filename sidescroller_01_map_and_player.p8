@@ -1,36 +1,38 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
--- sidescroller with physics
--- step 01: map and player
+-- sidescrolling platformer
+-- lesson 01: map and player
 -- by matthew dimatteo
 
 -- tab 0: game loop
--- tab 1: *** make player ***
+-- *** tab 1: make player
 
 -- runs once at start
+-- variables, objects
 function _init()
-	-- *** variables for plyr ***
+	-- *** variables for plyr
 	make_plyr() -- tab 1
 end -- /function _init()
 
--- runs 30 times per second
+-- runs 30x/sec
+-- movement, calculation
 function _update()
 
 end -- /function _update()
 
--- runs 30 times per second
+-- runs 30x/sec
+-- output/graphics
 function _draw()
 	cls() -- refresh screen
-	map() -- *** draw map ***
+	map() -- *** draw map
 
-	-- *** draw player sprite ***
+	-- *** draw player sprite
 	spr(plyr.n,plyr.x,plyr.y)
 end -- /function _draw()
 -->8
--- *** make player ***
--- call in _init()
+-- *** make player 
+-- call this function in _init()
 function make_plyr()
 	plyr = {} -- table
 	

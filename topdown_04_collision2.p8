@@ -2,7 +2,7 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 -- top-down adventure
--- lesson 03: collision
+-- lesson 04: collision 2
 -- by matthew dimatteo
 
 -- tab 0: game loop
@@ -14,7 +14,7 @@ __lua__
 function _init()
 	make_plyr() -- tab 1
 	
-	-- *** target tile coords
+	-- target tile coords
 	tx=plyr.x
 	ty=plyr.y
 end -- /function _init()
@@ -22,7 +22,7 @@ end -- /function _init()
 -- runs 30x/sec
 -- movement, calculation
 function _update()
-	move_plyr() -- tab 2
+	move_plyr() -- *** tab 2
 end -- /function _update()
 
 -- runs 30x/sec
@@ -36,8 +36,8 @@ function _draw()
 	-- convert from tiles to pixels
 	spr(plyr.n,plyr.x*8,plyr.y*8)
 	
-	-- *** draw box where player
-	-- is trying to move to
+	-- draw box where player is
+	-- trying to move to
 	rect(tx*8,ty*8,8*tx+8,8*ty+8,7)
 end -- /function _draw()
 -->8
@@ -64,35 +64,55 @@ function move_plyr()
 
 	-- left
 	if btnp(⬅️) then
-		-- *** target is 1 tile 
-		-- to left of plyr
+		-- target 1 tile left of plyr
 		tx = plyr.x - 1
 		ty = plyr.y
 	end -- /if btnp(⬅️)
 	
 	-- right
 	if btnp(➡️) then
-		-- *** target is 1 tile 
-		-- to right of plyr
+		-- target 1 tile right of plyr
 		tx = plyr.x + 1
 		ty = plyr.y
 	end -- /if btnp(➡️)
 	
 	-- up
 	if btnp(⬆️) then
-		-- *** target is 1 tile
-		-- above plyr
+		-- target 1 tile above plyr
 		tx = plyr.x
 		ty = plyr.y - 1
 	end -- /if btnp(⬆️)
 	
 	-- down
 	if btnp(⬇️) then
-		-- *** target is 1 tile
-		-- below plyr
+		-- target 1 tile below plyr
 		tx = plyr.x
 		ty = plyr.y + 1
 	end -- /if btnp(⬇️)
+
+	-- *** sprite number of 
+	-- target tile
+	tn = mget(tx,ty)
+
+	-- *** sprite flags
+	wall = 0
+ 
+	-- *** true/false is flag 0
+	-- on for that sprite
+	is_wall = fget(tn,wall)
+ 
+	-- *** move to target if 
+	-- not a wall
+	if is_wall == false then
+		plyr.x=tx
+		plyr.y=ty
+	-- play bump sound if blocked
+	else
+		if btn(⬅️) or btn(➡️)
+		or btn(⬆️) or btn(⬇️) then
+			sfx(0)
+		end -- /if btn
+	end -- /if is_wall == false
 	
 end -- /function move_plyr()
 __gfx__

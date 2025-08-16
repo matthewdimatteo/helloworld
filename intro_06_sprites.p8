@@ -1,9 +1,8 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
 -- intro to game programming
--- example 6: sprites
+-- lesson 06: sprites
 -- by matthew dimatteo
 
 cls() -- refresh screen

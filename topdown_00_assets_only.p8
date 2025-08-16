@@ -1,10 +1,27 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
 -- top-down adventure
--- step 00: assets only
+-- lesson 00: assets only
 -- by matthew dimatteo
+
+-- runs once at start
+-- variables, objects
+function _init()
+
+end -- /function _init()
+
+-- runs 30x/sec
+-- movement, calculation
+function _update()
+
+end -- /function _update()
+
+-- runs 30x/sec
+-- output/graphics
+function _draw()
+	cls() -- refresh screen
+end -- /function _draw()
 __gfx__
 00000000bbbbbbbbbbbbbbbbbb5555bbbbb33bbbbbb33bbbbbb33bbbbbb33bbbbbbbbbbb55555555555555550000000000000000000000000000000000000000
 00000000bbbbbbbbbbbbbbbbb555555bbb3333bbbb3333bbbb3333bbbb3333bbbbbbbbbb556666555bbbbbb50000000000000000000000000000000000000000

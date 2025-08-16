@@ -1,32 +1,35 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
 -- intro to game programming
--- example 10: functions
+-- lesson 10: functions
 -- by matthew dimatteo
+
+-- *** tab 0: game loop
+-- *** tab 1: make player
+-- *** tab 2: move player
 
 -- runs once at start
 -- variables, objects
 function _init()
-	make_plyr() -- tab 1
+	make_plyr() -- *** tab 1
 end -- /function _init()
 
 -- runs 30x/sec
 -- movement, calculation
 function _update()
-	move_plyr() -- tab 2	
+	move_plyr() -- *** tab 2	
 end -- /function _update()
 
 -- runs 30x/sec
 -- output/graphics
 function _draw()
 	cls() -- refresh screen
-	spr(n,x,y) -- draw plyr sprite
+	spr(n,x,y) -- draw player
 	spr(2,116,60) -- draw key
 end -- /function _draw()
 -->8
--- make player function
+-- *** make player
 function make_plyr()
 	n=1 -- sprite number
 	x=4 -- x coordinate
@@ -34,7 +37,7 @@ function make_plyr()
 	spd=1 -- speed
 end -- /function make_plyr()
 -->8
--- move player function
+-- *** move player
 function move_plyr()
 
 	-- move left

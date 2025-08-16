@@ -1,24 +1,23 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
 -- intro to game programming
--- example 7: game loop
+-- lesson 07: game loop
 -- by matthew dimatteo
 
--- runs once at start
+-- *** runs once at start
 -- variables, objects
 function _init()
 	
 end -- /function _init()
 
--- runs 30x/sec
+-- *** runs 30x/sec
 -- movement, calculation
 function _update()
 	
 end -- /function _update()
 
--- runs 30x/sec
+-- *** runs 30x/sec
 -- output/graphics
 function _draw()
 	cls() -- refresh screen

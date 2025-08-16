@@ -1,9 +1,8 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
 -- intro to game programming
--- example 3: text
+-- lesson 03: text
 -- by matthew dimatteo
 
 cls() -- clear the screen

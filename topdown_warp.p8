@@ -1,19 +1,18 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
--- top-down template
--- tile-based movement
--- *** warp ***
+-- top-down adventure
+-- warp example
 -- by matthew dimatteo
 
 -- tab 0: game loop
 -- tab 1: make player
 -- tab 2: move player
--- tab 3: screen-based camera
--- tab 4: *** warp ***
+-- tab 3: camera
+-- *** tab 4: warp
 
 -- runs once at start
+-- variables, objects
 function _init()
 	make_plyr() -- tab 1
 	
@@ -27,7 +26,7 @@ end -- /function _init()
 function _update()
 	move_plyr() -- tab 2
 	cam_screen() -- tab 3
-	warp() -- *** tab 4 ***
+	warp() -- *** tab 4
 end -- /function _update()
 
 -- runs 30x/sec
@@ -47,7 +46,8 @@ function _draw()
 	print("cam : "..flr(camx)..","..flr(camy),camx+12,camy+20,0)
 end -- /function _draw()
 -->8
--- make player --
+-- make player
+-- call this function in _init()
 function make_plyr()
 	plyr = {} -- table
 	plyr.n = 64 -- sprite number
@@ -69,6 +69,7 @@ function make_plyr()
 end -- /function make_plyr()
 -->8
 -- move player
+-- call this function in _update()
 function move_plyr()
 
 	-- instead of just moving,
@@ -149,7 +150,8 @@ function move_plyr()
 	
 end -- /function move_plyr()
 -->8
--- *** screen-based camera ***
+-- screen-based camera
+-- call this function in _update()
 function cam_screen()
 
 	-- determine top-left screen
@@ -184,9 +186,10 @@ function cam_screen()
 	-- position the camera
 	camera(camx,camy)
 	 
-end -- /function set_camera()
+end -- /function cam_screen()
 -->8
--- *** warp ***
+-- *** warp
+-- call this function in _update()
 function warp()
 	-- dungeon entrance tile coords
 	-- these coords align with the

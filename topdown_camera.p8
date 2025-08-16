@@ -1,20 +1,19 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
--- top-down template
--- tile-based movement
--- *** camera ***
+-- top-down adventure
+-- camera example
 -- by matthew dimatteo
 
 -- tab 0: game loop
 -- tab 1: make player
 -- tab 2: move player
--- tab 3: *** screen-based camera ***
--- tab 4: *** camera follow ***
+-- *** tab 3: screen-based camera
+-- *** tab 4: camera follow
 -- tab 5: swap camera modes
 
 -- runs once at start
+-- variables, objects
 function _init()
 	make_plyr() -- tab 1
 	
@@ -33,11 +32,11 @@ function _update()
 	move_plyr() -- tab 2
 	swap_cam() -- tab 5
 
-	-- *** set the camera ***
+	-- *** set the camera
 	if mode == "screen" then
-		cam_screen() -- *** tab 3 ***
+		cam_screen() -- *** tab 3
 	elseif mode == "follow" then
-		cam_follow() -- *** tab 4 ***
+		cam_follow() -- *** tab 4
 	end -- /if mode
 end -- /function _update()
 
@@ -62,7 +61,8 @@ function _draw()
 	print("z=swap mode",camx+76,camy+20,0)
 end -- /function _draw()
 -->8
--- make player --
+-- make player
+-- call this function in _init()
 function make_plyr()
 	plyr = {} -- table
 	plyr.n = 64 -- sprite number
@@ -84,6 +84,7 @@ function make_plyr()
 end -- /function make_plyr()
 -->8
 -- move player
+-- call this function in _update()
 function move_plyr()
 
 	-- instead of just moving,
@@ -164,7 +165,8 @@ function move_plyr()
 	
 end -- /function move_plyr()
 -->8
--- *** screen-based camera ***
+-- *** screen-based camera
+-- call this function in _update()
 function cam_screen()
 
 	-- determine top-left screen
@@ -199,9 +201,10 @@ function cam_screen()
 	-- position the camera
 	camera(camx,camy)
 	 
-end -- /function set_camera()
+end -- /function cam_screen()
 -->8
--- *** camera follow ***
+-- *** camera follow
+-- call this function in _update()
 function cam_follow()
 
 	-- center on player
@@ -236,6 +239,7 @@ function cam_follow()
 end -- /function cam_follow()
 -->8
 -- swap camera mode
+-- call this function in _update()
 function swap_cam()
 
 	-- press z to swap cam mode

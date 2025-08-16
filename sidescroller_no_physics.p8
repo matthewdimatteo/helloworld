@@ -1,24 +1,25 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
--- sidescroller template
--- no physics
+-- sidescrolling platformer
+-- no-physics example
 -- by matthew dimatteo
 
 -- tab 0: game loop
--- tab 1: make player function
--- tab 2: move player function
--- tab 3: map collision function
+-- tab 1: make player
+-- tab 2: move player
+-- tab 3: map collision
 -- tab 4: debug hud
 
 -- runs once at start
+-- variables, objects
 function _init()
 	debug = true -- debug mode
 	make_plyr() -- tab 1
 end -- /function _init()
 
--- runs 30 times per second
+-- runs 30x/sec
+-- movement, calculation
 function _update()
 	move_plyr() -- tab 2
 	
@@ -33,7 +34,8 @@ function _update()
 	
 end -- /function _update()
 
--- runs 30 times per second
+-- runs 30x/sec
+-- output/graphics
 function _draw()
 	cls() -- refresh screen
 	map() -- draw map
@@ -50,8 +52,8 @@ function _draw()
 
 end -- /function _draw()
 -->8
--- make player function
--- call in _init()
+-- make player
+-- call this function in _init()
 function make_plyr()
 	plyr = {} -- table
 	
@@ -92,8 +94,8 @@ function make_plyr()
 	rx1=0 ry1=0 rx2=0 ry2=0
 end -- /function make_plyr()
 -->8
--- move player function
--- call in _update()
+-- move player
+-- call this function in _update()
 function move_plyr()
 
 	-- initiate jump
@@ -185,16 +187,16 @@ function move_plyr()
 	
 end -- /function move_plyr()
 -->8
--- map collision function
+-- map collision
 
--- call in move_plyr() within
--- an if statement, like this:
+-- call this function in 
+-- move_plyr() in an if
+-- statement, like this:
 
 -- if mcollide(plyr,⬇️,0) then
 -- // run code for what happens
--- // when collision is true
+-- // when collision occurs
 -- end 
-
 function mcollide(obj,dir,flag)
 	
 	-- determine location of map
@@ -257,6 +259,7 @@ function mcollide(obj,dir,flag)
 end --/function mcollide()
 -->8
 -- debug hud
+-- call this function in _draw()
 function debug_scrn()
 
 	-- draw collision hitbox

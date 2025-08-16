@@ -1,22 +1,36 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- rider game academy
 -- intro to game programming
--- example 12: collection
+-- lesson 12: collection
 -- by matthew dimatteo
+
+-- tab 0: game loop
+-- tab 1: make player
+-- tab 2: move player
+-- tab 3: animate key
+-- *** tab 4: collect key
 
 -- runs once at start
 -- variables, objects
 function _init()
 	make_plyr() -- tab 1
-	keys = 0 -- collection
+
+	-- *** collection variables
+	keys = 0 -- item count
 	collected = false
 	
-	key = 2 -- key sprite
-	keyx= 116 -- key x position
-	keyy= 60 -- key y position
+	-- key variables
+	key = 2 -- sprite number
 	timer = 0 -- animation timer
+
+	-- *** we need to know the
+	-- key's x,y position to
+	-- detect if the player
+	-- is touching the key
+	keyx= 116 -- *** x position
+	keyy= 60 -- *** y position
+	
 end -- /function _init()
 
 -- runs 30x/sec
@@ -24,29 +38,30 @@ end -- /function _init()
 function _update()
 	move_plyr() -- tab 2	
 	anim_key() -- tab 3
-	collect() -- tab 4
+	collect() -- *** tab 4
 end -- /function _update()
 
 -- runs 30x/sec
 -- output/graphics
 function _draw()
 	cls() -- refresh screen
-	spr(n,x,y) -- draw plyr sprite
+	spr(n,x,y) -- draw player
 	
-	-- draw the key until it is
+	-- *** draw the key until it's
 	-- collected; then print the
-	-- player's inventory count
+	-- player's item count
 	if collected == false then
 		spr(key,keyx,keyy)
 	else
 		print("keys: 1",2,2,7)
 	end -- /if collected
 
-	-- draw plyr hitbox
+	-- uncomment the rect function
+	-- to see the player's hitbox
 	--rect(x,y,x+8,y+8)
 end -- /function _draw()
 -->8
--- make player function
+-- make player
 function make_plyr()
 	n=1 -- sprite number
 	x=4 -- x coordinate
@@ -54,7 +69,7 @@ function make_plyr()
 	spd=2 -- speed
 end -- /function make_plyr()
 -->8
--- move player function
+-- move player
 function move_plyr()
 
 	-- move left
@@ -109,12 +124,13 @@ function anim_key()
 		timer = 0
 	end -- /if timer >= rate
 	
-end -- /function 
+end -- /function anim_key()
 -->8
--- collect key
+-- *** collect key
 function collect()
 
 	-- if plyr is touching key,
+	-- and key not yet collected,
 	-- add key to inventory
 	if x+8 >= keyx 
 	and x <= keyx+8 
@@ -124,9 +140,12 @@ function collect()
 	then
 	
 		-- set collected to true
+		-- in _draw(), we only
+		-- draw the key if this
+		-- variable is false
 		collected = true
 		
-		-- update inventory count
+		-- update item count
 		keys = keys + 1
 		
 		-- play sound effect

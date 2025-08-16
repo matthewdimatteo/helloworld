@@ -5,7 +5,7 @@ __lua__
 -- lesson 01: sprites
 -- by matthew dimatteo
 
-cls() -- clears the screen
+cls() -- refresh screen
 
 -- draw sprite 1 at x=60, y=118
 spr(1,60,118)
