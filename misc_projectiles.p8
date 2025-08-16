@@ -22,8 +22,8 @@ function _init()
 	-- player variables
 	make_plyr() -- tab 1
 	
-	-- create tables for all active
-	-- sets of objects
+	-- create table for all
+	-- active lasers
 	lasers = {}
 end -- /function _init()
 
