@@ -1,142 +1,157 @@
 pico-8 cartridge // http://www.pico-8.com
-version 42
+version 43
 __lua__
--- runs once at the start
--- set starting conditions here
+-- paddleball w/physics
+-- lesson 09: reset ball
+-- by matthew dimatteo
+
+-- tab 0: game loop
+-- tab 1: paddle functions
+-- tab 2: ball functions
+
+-- runs once at start
+-- variables, objects
 function _init()
-    gravity = 0.3 -- global variable
-    
-    -- declare game objects
-    make_paddle()
-    make_ball()
- 
-end -- end _init()
+	gravity = 0.3
+	make_paddle() -- tab 1
+	make_ball() -- tab 2
+end -- /function _init()
 
 -- runs 30x/sec
--- perform calculations here
+-- movement, calculation
 function _update()
-    move_paddle()
-    move_ball()
-end -- end _update()
+	move_paddle() -- tab 1
+	move_ball() -- tab 2
+end -- /function _update()
 
 -- runs 30x/sec
--- draw graphics here
+-- output/graphics
 function _draw()
-	cls() -- clear the screen
-	print(ball.yspeed)
-    spr(paddle.sp,paddle.x,paddle.y)
-    spr(ball.sp,ball.x,ball.y)
-end
+	cls() -- refresh screen
+	
+	-- draw paddle
+	spr(pad.n,pad.x,pad.y)
+	
+	-- draw ball
+	spr(bal.n,bal.x,bal.y)
+end -- /function _draw()
 -->8
-
 -- paddle
 function make_paddle()
-    paddle = {} -- game object
-    paddle.sp = 1 -- property of object
-    paddle.x = 60
-    paddle.y = 118
-    paddle.w = 8
-    paddle.h = 2
-    paddle.speed = 3
-end
+	pad = {} -- game object
+
+	-- properties of object
+	pad.n = 1 -- sprite number
+	pad.x = 60
+	pad.y = 118
+	pad.w = 8 -- width
+	pad.h = 2 -- height
+	pad.spd = 3 -- speed
+end -- /function make_paddle()
 
 function move_paddle()
-	
-	-- left arrow
-    if btn(0) then
-        paddle.x -= paddle.speed
-    end -- end if btn(0)
- 
-    -- right arrow
-    if btn(1) then
-        paddle.x += paddle.speed
-    end -- end if btn(1)
- 
-    -- keep on screen left
-    if paddle.x < 0 then
-        paddle.x = 0
-    end -- end if paddle.x < 0
-    
-    -- keep on screen right
-    if paddle.x > 120 then
-        paddle.x = 120
-    end -- end if paddle.x > 120
- 
-end -- end move_paddle()
--->8
 
+	-- move left
+	if btn(⬅️) then
+		pad.x -= pad.spd
+	end -- / if btn(⬅️)
+ 
+	-- move right
+	if btn(➡️) then
+		pad.x += pad.spd
+	end -- / if btn(➡️)
+ 
+	-- keep on screen left
+	if pad.x < 0 then
+		pad.x = 0
+	end -- /if pad.x < 0
+ 
+	-- keep on screen right
+	if pad.x > 120 then
+		pad.x = 120
+	end -- /if pad.x > 120
+ 
+end -- /function move_paddle()
+-->8
 -- ball
 function make_ball()
-    ball = {}
-    ball.sp = 2
-    ball.x = 60
-    ball.y = 2
-    ball.w = 8
-    ball.h = 8
-    ball.xspeed = 0
-    ball.yspeed = 0
-end
+	bal = {} -- game object
+
+	-- properties of object
+	bal.n = 2 -- sprite number
+	bal.x = 60
+	bal.y = 2
+	bal.w = 8 -- width
+	bal.h = 8 -- height
+	bal.dx = 0 -- active x speed
+	bal.dy = 0 -- active y speed
+end -- /function make_ball()
 
 function move_ball()
  
-    ball.yspeed += gravity
+	-- apply gravity to speed
+	bal.dy += gravity
     
-    if collide(ball,paddle) then
-        ball.y -= 1
-        ball.yspeed *= -1
-        
-        if btn(0) then
-            ball.xspeed = -paddle.speed
-        end -- end if btn(0)
-        
-        if btn(1) then
-            ball.xspeed = paddle.speed
-        end -- end if btn(1)
-    
-    end -- end if collide
-    
-    -- bounce off left wall
-    if ball.x < 0 then
-        ball.xspeed *= -1
-    end -- end if ball.x < 0
- 
-    -- bounce off right wall
-    if ball.x > 120 then
-        ball.xspeed *= -1
-    end -- end if ball.x > 120
-    
-    -- bounce off top wall
-    if ball.y < 0 then
-        ball.y += 1 -- keep from getting stuck
-        ball.yspeed *= -1
-    end -- end if ball.y < 0
- 
-    -- reset after falling below
-    if ball.y > 128 then
-        ball.x = 60
-        ball.y = 2
-        ball.xspeed = 0
-        ball.yspeed = 0
-    end -- end if ball.y > 128
-    
-    ball.x += ball.xspeed
-    ball.y += ball.yspeed
- 
-end -- end function move_ball()
--->8
+	-- check collision
+	if collide(bal,pad) then
 
+		-- reverse direction
+		bal.dy *= -1
+        
+		-- bounce left
+		if btn(⬅️) then
+			bal.dx = -pad.spd
+		end -- /if btn(⬅️)
+        
+		-- bounce right
+		if btn(➡️) then
+			bal.dx = pad.spd
+		end -- /if btn(➡️)
+    
+	end -- /if collide
+    
+	-- bounce off left wall
+	if bal.x < 0 then
+		bal.dx *= -1
+	end -- /if bal.x < 0
+ 
+	-- bounce off right wall
+	if bal.x > 120 then
+		bal.dx *= -1
+	end -- /if bal.x > 120
+    
+	-- bounce off ceiling
+	if bal.y < 0 then
+		bal.y += 1 -- don't get stuck
+		bal.dy *= -1
+	end -- /if bal.y < 0
+ 
+	-- reset after falling below
+	if bal.y > 128 then
+		bal.x = 60
+		bal.y = 2
+		bal.dx = 0
+		bal.dy = 0
+	end -- /if bal.y > 128
+    
+	-- apply speed to position
+	bal.x += bal.dx
+	bal.y += bal.dy
+ 
+end -- /function move_ball()
+-->8
 -- object collsiion
 function collide(b,p)
-    if b.x + b.w >= p.x
-    and b.x <= p.x + p.w
-    and b.y + b.h >= p.y
-    and b.y <= p.y + p.h
-    then
-        return true
-    else
-        return false
-    end -- end if
-end -- end function
+	if b.x + b.w >= p.x
+	and b.x <= p.x + p.w
+	and b.y + b.h >= p.y
+	and b.y <= p.y + p.h
+	then
+		return true
+	else
+		return false
+	end -- /if
+end -- /function collide()
 __gfx__
 000000000000000000cccc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000cccccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

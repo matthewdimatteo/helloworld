@@ -1,49 +1,56 @@
 pico-8 cartridge // http://www.pico-8.com
-version 42
+version 43
 __lua__
--- runs once at the start
--- set starting conditions here
+-- paddleball w/physics
+-- lesson 03: constraining movement
+-- by matthew dimatteo
+
+-- runs once at start
+-- variables, objects
 function _init()
-    gravity = 0.3 -- global variable
-    paddle = {} -- game object
-    paddle.sp = 1 -- property of object
-    paddle.x = 60
-    paddle.y = 118
-    paddle.speed = 3
-end
+	pad = {} -- game object
+
+	-- properties of object
+	pad.n = 1 -- sprite number
+	pad.x = 60
+	pad.y = 118
+	pad.spd = 3
+end -- /function _init()
 
 -- runs 30x/sec
--- perform calculations here
+-- movement, calculation
 function _update()
 
-    -- left arrow
-    if btn(0) then
-        paddle.x -= paddle.speed
-    end -- end if btn(0)
-    
-    -- right arrow
-    if btn(1) then
-        paddle.x += paddle.speed
-    end -- end if btn(1)
-    
-    -- keep on screen left
-    if paddle.x < 0 then
-        paddle.x = 0
-    end -- end if paddle.x < 0
-    
-    -- keep on screen right
-    if paddle.x > 120 then
-        paddle.x = 120
-    end -- end if paddle.x > 120
+	-- move left
+	if btn(⬅️) then
+		pad.x -= pad.spd
+	end -- / if btn(⬅️)
  
-end -- end _update()
+	-- move right
+	if btn(➡️) then
+		pad.x += pad.spd
+	end -- / if btn(➡️)
+ 
+	-- keep on screen left
+	if pad.x < 0 then
+		pad.x = 0
+	end -- /if pad.x < 0
+ 
+	-- keep on screen right
+	if pad.x > 120 then
+		pad.x = 120
+	end -- /if pad.x > 120
+ 
+end -- /function _update()
 
 -- runs 30x/sec
--- draw graphics here
+-- output/graphics
 function _draw()
-	cls() -- clear the screen
-    spr(paddle.sp,paddle.x,paddle.y)
-end
+	cls() -- refresh screen
+
+	-- draw paddle
+	spr(pad.n,pad.x,pad.y)
+end -- /function _draw()
 __gfx__
 000000000000000000cccc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000cccccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

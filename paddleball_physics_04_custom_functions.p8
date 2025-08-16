@@ -1,61 +1,70 @@
 pico-8 cartridge // http://www.pico-8.com
-version 42
+version 43
 __lua__
--- runs once at the start
--- set starting conditions here
+-- paddleball w/physics
+-- lesson 04: custom functions
+-- by matthew dimatteo
+
+-- tab 0: game loop
+-- tab 1: paddle functions
+
+-- runs once at start
+-- variables, objects
 function _init()
-    gravity = 0.3 -- global variable
-    make_pad()
-end
+	make_paddle() -- tab 1
+end -- /function _init()
 
 -- runs 30x/sec
--- perform calculations here
+-- movement, calculation
 function _update()
-    move_pad()
-end -- end _update()
+	move_paddle() -- tab 1
+end -- /function _update()
 
 -- runs 30x/sec
--- draw graphics here
+-- output/graphics
 function _draw()
-	cls() -- clear the screen
-    spr(pad.n,pad.x,pad.y)
-end
--->8
-
--- pad
-function make_pad()
-    pad = {} -- object
-    pad.n = 1 -- sprite number
-    pad.x = 60 -- x position
-    pad.y = 118 -- y position
-    pad.w = 8 -- width
-    pad.h = 2 -- height
-    pad.spd = 3 -- speed
-end
-
-function move_pad()
+	cls() -- refresh screen
 	
-	-- left arrow
-    if btn(0) then
-        pad.x -= pad.spd
-    end -- end if btn(0)
-    
-    -- right arrow
-    if btn(1) then
-        pad.x += pad.spd
-    end -- end if btn(1)
-    
-    -- keep on screen left
-    if pad.x < 0 then
-        pad.x = 0
-    end -- end if pad.x < 0
-    
-    -- keep on screen right
-    if pad.x > 128-pad.w then
-        pad.x = 120
-    end -- end if pad.x > 120
+	-- draw paddle
+	spr(pad.n,pad.x,pad.y)
+end -- /function _draw()
+-->8
+-- paddle
+function make_paddle()
+	pad = {} -- game object
+
+	-- properties of object
+	pad.n = 1 -- sprite number
+	pad.x = 60
+	pad.y = 118
+	pad.w = 8 -- width
+	pad.h = 2 -- height
+	pad.spd = 3 -- speed
+end -- /function make_paddle()
+
+function move_paddle()
+
+	-- move left
+	if btn(⬅️) then
+		pad.x -= pad.spd
+	end -- / if btn(⬅️)
  
-end -- end move_pad()
+	-- move right
+	if btn(➡️) then
+		pad.x += pad.spd
+	end -- / if btn(➡️)
+ 
+	-- keep on screen left
+	if pad.x < 0 then
+		pad.x = 0
+	end -- /if pad.x < 0
+ 
+	-- keep on screen right
+	if pad.x > 120 then
+		pad.x = 120
+	end -- /if pad.x > 120
+ 
+end -- /function move_paddle()
 __gfx__
 000000000000000000cccc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000cccccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
