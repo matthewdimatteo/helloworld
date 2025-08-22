@@ -209,27 +209,31 @@ function mcollide(obj,dir,flag)
 	-- determine location of map
 	-- tile relative to player
 	-- (depending on direction)
-	if dir == ⬅️ then
+	if dir == ⬅️
+	or dir == "left" then
 		x1 = obj.x-1
 		y1 = obj.y
 		x2 = x1
 		y2 = y1+obj.h-1
-	elseif dir == ➡️ then
+	elseif dir == ➡️ 
+	or dir == "right" then
 		x1 = obj.x+obj.w
 		y1 = obj.y
 		x2 = x1
 		y2 = y1+obj.h-1
-	elseif dir == ⬆️ then
+	elseif dir == ⬆️
+	or dir == "up" then
 		x1 = obj.x
 		y1 = obj.y-1
 		x2 = x1+obj.w-1
 		y2 = y1
-	elseif dir == ⬇️ then
+	elseif dir == ⬇️
+	or dir == "down" then
 		x1 = obj.x
 		y1 = obj.y+obj.h
 		x2 = x1+obj.w-1
 		y2 = y1
-	end -- /if dir
+	end -- /if-elseif dir
 	
 	-- map coords to hitbox
 	-- (for debug purposes)
@@ -263,7 +267,7 @@ function mcollide(obj,dir,flag)
 		return false
 	end -- /if f1 or f2 or f3 or f4
 
-end -- /mcollide()
+end -- /function mcollide()
 -->8
 -- debug hud
 -- call this function in _draw()
