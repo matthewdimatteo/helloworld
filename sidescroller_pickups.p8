@@ -29,7 +29,12 @@ end -- /function _init()
 -- movement, calculation
 function _update()
 	move_plyr() --  tab 2
-	pickup() -- *** tab 4 
+
+	-- *** allow the player
+	-- to collect rupees
+	pickup(1) -- tab 4 
+	pickup(2) -- tab 4 
+	pickup(3) -- tab 4 
 end -- /function _update()
 
 -- runs 30x/sec
@@ -139,6 +144,15 @@ function move_plyr()
 			-- fell into ground
 			plyr.y -= plyr.y%8
 		end -- /if mcollide down
+
+		-- collect rupees
+		if mcollide(plyr,⬇️,1) then 
+			collect(1)
+		elseif mcollide(plyr,⬇️,2) then
+			collect(2)
+		elseif mcollide(plyr,⬇️,3) then 
+			collect(3)
+		end -- /if mcollide 1/2/3
 	
 	end -- /if plyr.dy < / > 0
 
@@ -154,6 +168,7 @@ function move_plyr()
 			-- avoid getting stuck in wall
 			plyr.x=ceil((plyr.x-1)/8)*8
 		end -- /if mcollide left
+
 	
 	-- test collision on right
 	elseif plyr.dx > 0 then
@@ -247,60 +262,74 @@ function mcollide(obj,dir,flag)
 end -- /function mcollide()
 -->8
 -- *** pickups
--- call this function in _update()
-function pickup()
+function pickup(f)
+
+	-- f is the flag number
+	-- 1 = green rupee
+	-- 2 = blue rupee
+	-- 3 = red rupee
 	
 	-- determine player's x,y
 	-- location as a tile value
-	local x = flr(plyr.x/8)
-	local y = flr(plyr.y/8)
-	
-	-- account for player's width
-	-- when approaching pickup
-	-- from the left (plyr dir ➡️)
-	if plyr.dir == ➡️
-	or plyr.dir == 1 then
-		x = flr((plyr.x+plyr.w)/8)
-	else
-		x = flr(plyr.x/8)
-	end -- /if/else plyr.dir == ➡️
-	
+	local x1 = flr(plyr.x/8)
+	local y1 = flr(plyr.y/8)
+	local x2 = flr((plyr.x+plyr.w)/8)
+	local y2 = flr((plyr.y+plyr.h)/8)
+		
 	-- get sprite number of tile
-	-- the player is touching
-	local n = mget(x,y)
-	
-	-- sprite flags for pickups
-	green=1
-	blue =2
-	red  =3
+	-- at 4 points
+	n1 = mget(x1,y1)
+	n2 = mget(x2,y1)
+	n3 = mget(x1,y2)
+	n4 = mget(x2,y2)
 	
 	-- check for flag on sprite
-	is_green = fget(n,green)
-	is_blue  = fget(n,blue)
-	is_red   = fget(n,red)
+	-- at 4 points
+	f1 = fget(n1,f)
+	f2 = fget(n2,f)
+	f3 = fget(n3,f)
+	f4 = fget(n4,f)
 	
-	-- background tile spr number
-	bg = 33 -- sky tile
+	-- x,y, sprite number of tile
+	-- that triggered collision
+	local x = 0
+	local y = 0
+	local n = 0
 	
-	-- when player touches pickup,
-	-- earn points and 
-	-- replace collected tile with
-	-- background sprite
-	if is_green then
-		mset(x,y,bg)
-		score += 1
-		sfx(0)
-	elseif is_blue then
-		mset(x,y,bg)
-		score += 5
-		sfx(1)
-	elseif is_red then
-		mset(x,y,bg)
-		score += 20
-		sfx(2)
-	end -- /if-elseif is_g/r/b
+	-- determine which point
+	-- triggered collision
+	if f1 then
+		n=n1	x=x1	y=y1
+	elseif f2 then
+		n=n2	x=x2	y=y1
+	elseif f3 then
+		n=n3	x=x1	y=y2
+	elseif f4 then
+		n=n4	x=x2	y=y2
+	end -- /if
+	
+	if f1 or f2 or f3 or f4 then
+		-- pass the flag number
+		-- f into the function
+		-- to determine how much
+		-- the rupee is worth
+		if f == 1 then
+			score += 1
+			sfx(0)
+		elseif f == 2 then
+			score += 5
+			sfx(1)
+		elseif f == 3 then
+			score += 20
+			sfx(2)
+		end -- /if-elseif f
 
-end -- /function pickup()
+		-- swap rupee with
+		-- background tile
+		mset(x,y,33)
+	end -- /if f1/f2/f3/f4
+
+end -- /function collect(f)
 __gfx__
 0000000000aaaa000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000aaaaaa00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
