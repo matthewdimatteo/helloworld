@@ -31,7 +31,7 @@ function _update()
 	move_plyr() --  tab 2
 
 	-- *** allow the player
-	-- to collect rupees
+	-- to collect pickups
 	pickup(1) -- tab 4 
 	pickup(2) -- tab 4 
 	pickup(3) -- tab 4 
@@ -145,7 +145,7 @@ function move_plyr()
 			plyr.y -= plyr.y%8
 		end -- /if mcollide down
 
-		-- collect rupees
+		-- collect pickups
 		if mcollide(plyr,⬇️,1) then 
 			collect(1)
 		elseif mcollide(plyr,⬇️,2) then
@@ -312,7 +312,7 @@ function pickup(f)
 		-- pass the flag number
 		-- f into the function
 		-- to determine how much
-		-- the rupee is worth
+		-- the pickup is worth
 		if f == 1 then
 			score += 1
 			sfx(0)
@@ -324,7 +324,7 @@ function pickup(f)
 			sfx(2)
 		end -- /if-elseif f
 
-		-- swap rupee with
+		-- swap pickup with
 		-- background tile
 		mset(x,y,33)
 	end -- /if f1/f2/f3/f4
