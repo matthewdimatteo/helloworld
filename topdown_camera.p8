@@ -1,5 +1,5 @@
 pico-8 cartridge // http://www.pico-8.com
-version 42
+version 43
 __lua__
 -- top-down adventure
 -- camera example
@@ -212,26 +212,24 @@ function cam_follow()
 	camy=8*plyr.y-64+plyr.h/2
 
 	-- adjust at left edge
-	if plyr.x < 8 then
-		camx += (8*(8-plyr.x)+plyr.w/2)-1
-	end -- /if plyr.x  < 8
+	if camx < 0 then
+		camx = 0
+	end -- /if camx < 0
 
 	-- adjust at top edge
-	if plyr.y < 8 then
-		camy += (8*(8-plyr.y)+plyr.h/2)-1
-	end -- /if plyr.y < 8
+	if camy < 0 then
+		camy = 0
+	end -- /if camy < 0
 
 	-- adjust at right edge
-	if plyr.x > 127-8 then
-		camx -= 8*(plyr.x-(127-7))
-			+plyr.w/2
-	end -- /if plyr.x > 127-8
+	if camx > 1024-128 then
+		camx = 1024-128
+	end -- /if camx > 1024-128
 
 	-- adjust at bottom edge
-	if plyr.y > 63-8 then
-		camy -= 8*(plyr.y-(63-7))
-			+plyr.h/2
-	end -- /if plyr.y > 63-8
+	if camy > 512-128 then
+		camy = 512-128
+	end -- /if camy > 512-128
 
 	-- position the camera
 	camera(camx,camy)
