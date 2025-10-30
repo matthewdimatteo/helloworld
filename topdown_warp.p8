@@ -154,36 +154,22 @@ end -- /function move_plyr()
 -- call this function in _update()
 function cam_screen()
 
-	-- determine top-left screen
-	-- coordinates (in pixels)
-	-- based on player's x,y coords
+	-- determine which map cell
+	-- the player is in
+	-- (a 16x16 tile screen)
+	col = flr(plyr.x/16)
+	row = flr(plyr.y/16)
 	
-	-- calculate how many screens
-	-- to the right of the origin
-	-- (0,0) the player is
-	screenx=flr(plyr.x/16) 
-
-	-- calculate how many screens
-	-- below the origin (0,0) the
-	-- player is
-	screeny=flr(plyr.y/16) 
-
-	-- multiply the camera coords 
-	-- by the number of pixels per
-	-- tile to convert the player's
-	-- tile coords to a pixel value
-	camx = screenx * 8 
-	camy = screeny * 8 
-
-	-- multiply the camera coords 
-	-- by the number of tiles per
-	-- screen to position it at the
-	-- origin of the current screen
-	-- (set of 16 tiles)
-	camx*=16
-	camy*=16
+	-- multiply by 16 to position
+	-- camera in top-left corner
+	-- of current map cell 
+	-- (multiply by 8 to convert
+	-- from tiles to pixels)
+	camx = col * 16 * 8
+	camy = row * 16 * 8
 	
-	-- position the camera
+	-- plug the camera coordinates
+	-- into the camera function
 	camera(camx,camy)
 	 
 end -- /function cam_screen()
