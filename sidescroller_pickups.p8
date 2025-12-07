@@ -1,5 +1,5 @@
 pico-8 cartridge // http://www.pico-8.com
-version 42
+version 43
 __lua__
 -- sidescrolling platformer
 -- pickups example
@@ -262,50 +262,50 @@ function mcollide(obj,dir,flag)
 end -- /function mcollide()
 -->8
 -- *** pickups
-function pickup(f)
+function pickup(flag)
 
-	-- f is the flag number
+	-- plug the flag number you
+	-- are checking for into this
+	-- function
+	
 	-- 1 = green rupee
 	-- 2 = blue rupee
 	-- 3 = red rupee
 	
-	-- determine player's x,y
-	-- location as a tile value
+	-- check four points on all
+	-- sides of the player
 	local x1 = flr(plyr.x/8)
 	local y1 = flr(plyr.y/8)
-	local x2 = flr((plyr.x+plyr.w)/8)
-	local y2 = flr((plyr.y+plyr.h)/8)
+	local x2 = flr((plyr.x+8)/8)
+	local y2 = flr((plyr.y+8)/8)
 		
 	-- get sprite number of tile
-	-- at 4 points
+	-- at each point
 	n1 = mget(x1,y1)
 	n2 = mget(x2,y1)
 	n3 = mget(x1,y2)
 	n4 = mget(x2,y2)
 	
 	-- check for flag on sprite
-	-- at 4 points
-	f1 = fget(n1,f)
-	f2 = fget(n2,f)
-	f3 = fget(n3,f)
-	f4 = fget(n4,f)
-	
-	-- x,y, sprite number of tile
-	-- that triggered collision
-	local x = 0
-	local y = 0
-	local n = 0
+	-- at each point
+	f1 = fget(n1,flag)
+	f2 = fget(n2,flag)
+	f3 = fget(n3,flag)
+	f4 = fget(n4,flag)
 	
 	-- determine which point
 	-- triggered collision
+	local x = 0
+	local y = 0
+	
 	if f1 then
-		n=n1	x=x1	y=y1
+		x=x1	y=y1
 	elseif f2 then
-		n=n2	x=x2	y=y1
+		x=x2	y=y1
 	elseif f3 then
-		n=n3	x=x1	y=y2
+		x=x1	y=y2
 	elseif f4 then
-		n=n4	x=x2	y=y2
+		x=x2	y=y2
 	end -- /if
 	
 	if f1 or f2 or f3 or f4 then
@@ -313,23 +313,23 @@ function pickup(f)
 		-- f into the function
 		-- to determine how much
 		-- the pickup is worth
-		if f == 1 then
+		if flag == 1 then
 			score += 1
 			sfx(0)
-		elseif f == 2 then
+		elseif flag == 2 then
 			score += 5
 			sfx(1)
-		elseif f == 3 then
+		elseif flag == 3 then
 			score += 20
 			sfx(2)
-		end -- /if-elseif f
+		end -- /if-elseif flag
 
 		-- swap pickup with
 		-- background tile
 		mset(x,y,33)
 	end -- /if f1/f2/f3/f4
 
-end -- /function collect(f)
+end -- /function collect(flag)
 __gfx__
 0000000000aaaa000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000aaaaaa00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
