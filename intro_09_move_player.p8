@@ -1,5 +1,5 @@
 pico-8 cartridge // http://www.pico-8.com
-version 42
+version 43
 __lua__
 -- intro to game programming
 -- lesson 09: move player
@@ -8,10 +8,16 @@ __lua__
 -- runs once at start
 -- variables, objects
 function _init()
-	n=1 -- sprite number
-	x=4 -- x coordinate
-	y=60 -- y coordinate
-	spd=1 -- *** speed
+	-- player variables
+	plyr_n=1 -- sprite number
+	plyr_x=4 -- x coordinate
+	plyr_y=60 -- y coordinate
+	plyr_spd=1 -- *** speed
+	
+	-- key variables
+	key_n=2 -- sprite number
+	key_x=116 -- x coordinate
+	key_y=60 -- y coordinate
 end -- /function _init()
 
 -- runs 30x/sec
@@ -20,22 +26,22 @@ function _update()
 
 	-- *** move left
 	if btn(⬅️) then
-		x = x - spd
+		plyr_x = plyr_x - plyr_spd
 	end -- /if btn(⬅️)
 	
 	-- *** move right
 	if btn(➡️) then
-		x = x + spd
+		plyr_x = plyr_x + plyr_spd
 	end -- /if btn(➡️)
 	
 	-- *** move up
 	if btn(⬆️) then
-		y = y - spd
+		plyr_y = plyr_y - plyr_spd
 	end -- /if btn(⬆️)
 	
 	-- *** move down
 	if btn(⬇️) then
-		y = y + spd
+		plyr_y = plyr_y + plyr_spd
 	end -- /if btn(⬇️)
 	
 end -- /function _update()
@@ -44,8 +50,10 @@ end -- /function _update()
 -- output/graphics
 function _draw()
 	cls() -- refresh screen
-	spr(n,x,y) -- draw player
-	spr(2,116,60) -- draw key
+	
+	-- draw player and key
+	spr(plyr_n,plyr_x,plyr_y)
+	spr(key_n,key_x,key_y)
 end -- /function _draw()
 __gfx__
 00000000009999000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
