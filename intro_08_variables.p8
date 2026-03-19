@@ -1,5 +1,5 @@
 pico-8 cartridge // http://www.pico-8.com
-version 42
+version 43
 __lua__
 -- intro to game programming
 -- lesson 08: variables
@@ -9,9 +9,14 @@ __lua__
 -- variables, objects
 function _init()
 	-- *** player variables
-	n=1 -- sprite number
-	x=4 -- x coordinate
-	y=60 -- y coordinate
+	plyr_n=1 -- sprite number
+	plyr_x=4 -- x coordinate
+	plyr_y=60 -- y coordinate
+	
+	-- *** key variables
+	key_n=2 -- sprite number
+	key_x=116 -- x coordinate
+	key_y=60 -- y coordinate
 end -- /function _init()
 
 -- runs 30x/sec
@@ -26,10 +31,10 @@ function _draw()
 	cls() -- refresh screen
 
 	-- *** draw sprites
-	-- "plug in" the player
+	-- "plug in" the player and key
 	-- variables here
-	spr(n,x,y) -- player
-	spr(2,116,60) -- key
+	spr(plyr_n,plyr_x,plyr_y)
+	spr(key_n,key_x,key_y)
 end -- /function _draw()
 __gfx__
 00000000009999000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

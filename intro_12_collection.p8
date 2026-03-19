@@ -6,7 +6,7 @@ __lua__
 -- by matthew dimatteo
 
 -- tab 0: game loop
--- tab 1: make player
+-- tab 1: make player, key
 -- tab 2: move player
 -- tab 3: animate key
 -- *** tab 4: collect key
@@ -15,22 +15,13 @@ __lua__
 -- variables, objects
 function _init()
 	make_plyr() -- tab 1
+	make_key() -- tab 1
 
 	-- *** collection variables
 	keys = 0 -- item count
 	collected = false
 	
-	-- key variables
-	key = 2 -- sprite number
 	timer = 0 -- animation timer
-
-	-- *** we need to know the
-	-- key's x,y position to
-	-- detect if the player
-	-- is touching the key
-	keyx= 116 -- *** x position
-	keyy= 60 -- *** y position
-	
 end -- /function _init()
 
 -- runs 30x/sec
@@ -45,51 +36,60 @@ end -- /function _update()
 -- output/graphics
 function _draw()
 	cls() -- refresh screen
-	spr(n,x,y) -- draw player
+
+	-- draw player
+	spr(plyr_n,plyr_x,plyr_y)
 	
 	-- *** draw the key until it's
 	-- collected; then print the
 	-- player's item count
 	if collected == false then
-		spr(key,keyx,keyy)
+		spr(key_n,key_x,key_y)
 	else
 		print("keys: 1",2,2,7)
 	end -- /if collected
 
 	-- uncomment the rect function
 	-- to see the player's hitbox
-	--rect(x,y,x+8,y+8)
+	--rect(plyr_x,plyr_y,plyr_x+8,plyr_y+8)
 end -- /function _draw()
 -->8
 -- make player
 function make_plyr()
-	n=1 -- sprite number
-	x=4 -- x coordinate
-	y=60 -- y coordinate
-	spd=2 -- speed
+	plyr_n=1 -- sprite number
+	plyr_x=4 -- x coordinate
+	plyr_y=60 -- y coordinate
+	plyr_spd=1 -- speed
 end -- /function make_plyr()
+
+-- make key
+function make_key()
+	key_n=2
+	key_x=116
+	key_y=60
+end -- /function make_key()
 -->8
 -- move player
 function move_plyr()
 
 	-- move left
 	if btn(⬅️) then
-		x = x - spd
+		plyr_x = plyr_x - plyr_spd
 	end -- /if btn(⬅️)
 	
 	-- move right
 	if btn(➡️) then
-		x = x + spd
+		plyr_x = plyr_x + plyr_spd
 	end -- /if btn(➡️)
 	
 	-- move up
 	if btn(⬆️) then
-		y = y - spd
+		plyr_y = plyr_y - plyr_spd
 	end -- /if btn(⬆️)
 	
 	-- move down
 	if btn(⬇️) then
-		y = y + spd
+		plyr_y = plyr_y + plyr_spd
 	end -- /if btn(⬇️)
 	
 end -- /function move_plyr()
@@ -112,12 +112,12 @@ function anim_key()
 	if timer >= rate then
 	
 		-- go to next sprite
-		key = key + 1 
+		key_n = key_n + 1 
 		
 		-- if key sprite reaches end
 		-- of loop, go back to start
-		if key > anim_end then
-			key = anim_start
+		if key_n > anim_end then
+			key_n = anim_start
 		end -- /if key > anim_end
 		
 		-- reset timer
@@ -132,10 +132,10 @@ function collect()
 	-- if plyr is touching key,
 	-- and key not yet collected,
 	-- add key to inventory
-	if x+8 >= keyx 
-	and x <= keyx+8 
-	and y+8 >= keyy
-	and y <= keyy+8
+	if plyr_x+8 >= key_x 
+	and plyr_x <= key_x+8 
+	and plyr_y+8 >= key_y
+	and plyr_y <= key_y+8
 	and collected == false
 	then
 	
